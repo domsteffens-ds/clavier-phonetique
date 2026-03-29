@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clavier Phonétique Français</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  color: white;
+}
+
+h1 {
+  font-size: 2.2em;
+  margin-bottom: 5px;
+  text-shadow: 0 0 20px rgba(100,200,255,0.5);
+}
+
+.subtitle {
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 25px;
+  font-size: 1em;
+}
+
+/* ZONE DE SAISIE */
+.zone-saisie {
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 20px 30px;
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.affichage-mot {
+  font-size: 3em;
+  font-weight: bold;
+  letter-spacing: 8px;
+  color: #64ffda;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 15px rgba(100,255,218,0.4);
+}
+
+.affichage-phonetique {
+  font-size: 1em;
+  color: rgba(255,255,255,0.5);
+  margin-top: 8px;
+  min-height: 20px;
+  font-style: italic;
+}
+
+/* CLAVIER */
+.clavier-container {
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 20px;
+}
+
+.clavier-titre {
+  font-size: 0.85em;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.rangee {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.touche {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  color: white;
+  font-size: 1.1em;
+  font-weight: bold;
+  width: 52px;
+  height: 52px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.touche:hover {
+  background: rgba(100,255,218,0.2);
+  border-color: #64ffda;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(100,255,218,0.2);
+}
+
+.touche:active {
+  transform: translateY(0px) scale(0.95);
+}
+
+.touche.espace {
+  width: 200px;
+  font-size: 0.8em;
+  color: rgba(255,255,255,0.6);
+}
+
+.touche.suppr {
+  width: 80px;
+  font-size: 0.8em;
+  background: rgba(255,100,100,0.15);
+  border-color: rgba(255,100,100,0.3);
+}
+
+.touche.suppr:hover {
+  background: rgba(255,100,100,0.3);
+  border-color: #ff6464;
+}
+
+.touche.effacer {
+  width: 110px;
+  font-size: 0.75em;
+  background: rgba(255,165,0,0.15);
+  border-color: rgba(255,165,0,0.3);
+}
+
+.touche.effacer:hover {
+  background: rgba(255,165,0,0.3);
+}
+
+/* RÉSULTATS */
+.zone-resultats {
+  width: 100%;
+  max-width: 900px;
+}
+
+.resultats-titre {
+  text-align: center;
+  font-size: 1em;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 15px;
+}
+
+.grille-mots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.carte-mot {
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 15px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+  max-width: 150px;
+}
+
+.carte-mot:hover {
+  background: rgba(100,255,218,0.1);
+  border-color: #64ffda;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(100,255,218,0.15);
+}
+
+.carte-mot.joue {
+  border-color: #64ffda;
+  background: rgba(100,255,218,0.15);
+}
+
+.carte-emoji {
+  font-size: 2.8em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.carte-texte {
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+  display: block;
+}
+
+.carte-syllabe {
+  font-size: 0.75em;
+  color: rgba(255,255,255,0.4);
+  display: block;
+  margin-top: 3px;
+}
+
+.msg-accueil {
+  text-align: center;
+  color: rgba(255,255,255,0.3);
+  font-size: 1.1em;
+  padding: 40px;
+}
+
+.msg-accueil span {
+  font-size: 2em;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* BADGE CORRESPONDANCE */
+.badge {
+  display: inline-block;
+  background: #64ffda;
+  color: #1a1a2e;
+  font-size: 0.65em;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+/* Animation apparition */
+@keyframes apparition {
+  from { opacity:0; transform: translateY(10px) scale(0.9); }
+  to   { opacity:1; transform: translateY(0)   scale(1); }
+}
+.carte-mot {
+  animation: apparition 0.3s ease forwards;
+}
+</style>
+</head>
+<body>
+
+<h1>🔤 Clavier Phonétique</h1>
+<p class="subtitle">Écris ton mot comme tu l'entends → je te propose les bons mots !</p>
+
+<!-- ZONE SAISIE -->
+<div class="zone-saisie">
+  <div class="affichage-mot" id="affichageMot">_</div>
+  <div class="affichage-phonetique" id="affichagePhon"></div>
+</div>
+
+<!-- CLAVIER AZERTY -->
+<div class="clavier-container">
+  <div class="clavier-titre">⌨️ Clique sur les lettres ou utilise ton clavier</div>
+  
+  <div class="rangee">
+    <button class="touche" onclick="ajouterLettre('a')">A</button>
+    <button class="touche" onclick="ajouterLettre('z')">Z</button>
+    <button class="touche" onclick="ajouterLettre('e')">E</button>
+    <button class="touche" onclick="ajouterLettre('r')">R</button>
+    <button class="touche" onclick="ajouterLettre('t')">T</button>
+    <button class="touche" onclick="ajouterLettre('y')">Y</button>
+    <button class="touche" onclick="ajouterLettre('u')">U</button>
+    <button class="touche" onclick="ajouterLettre('i')">I</button>
+    <button class="touche" onclick="ajouterLettre('o')">O</button>
+    <button class="touche" onclick="ajouterLettre('p')">P</button>
+  </div>
+  <div class="rangee">
+    <button class="touche" onclick="ajouterLettre('q')">Q</button>
+    <button class="touche" onclick="ajouterLettre('s')">S</button>
+    <button class="touche" onclick="ajouterLettre('d')">D</button>
+    <button class="touche" onclick="ajouterLettre('f')">F</button>
+    <button class="touche" onclick="ajouterLettre('g')">G</button>
+    <button class="touche" onclick="ajouterLettre('h')">H</button>
+    <button class="touche" onclick="ajouterLettre('j')">J</button>
+    <button class="touche" onclick="ajouterLettre('k')">K</button>
+    <button class="touche" onclick="ajouterLettre('l')">L</button>
+    <button class="touche" onclick="ajouterLettre('m')">M</button>
+  </div>
+  <div class="rangee">
+    <button class="touche" onclick="ajouterLettre('w')">W</button>
+    <button class="touche" onclick="ajouterLettre('x')">X</button>
+    <button class="touche" onclick="ajouterLettre('c')">C</button>
+    <button class="touche" onclick="ajouterLettre('v')">V</button>
+    <button class="touche" onclick="ajouterLettre('b')">B</button>
+    <button class="touche" onclick="ajouterLettre('n')">N</button>
+    <button class="touche suppr" onclick="supprimerLettre()">⌫ Suppr</button>
+    <button class="touche effacer" onclick="toutEffacer()">🗑️ Effacer</button>
+  </div>
+</div>
+
+<!-- RÉSULTATS -->
+<div class="zone-resultats">
+  <div class="resultats-titre" id="resultatsTitre"></div>
+  <div class="grille-mots" id="grilleMots">
+    <div class="msg-accueil">
+      <span>⌨️</span>
+      Commence à taper un mot pour voir les suggestions !
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// BASE DE MOTS AVEC PHONÉTIQUE
+// ============================================
+const MOTS = [
+  // A
+  {mot:"chat",     phon:"cha",     son:"cha",   emoji:"🐱", def:"animal"},
+  {mot:"chaton",   phon:"chaton",  son:"chaton",emoji:"🐱", def:"bébé chat"},
+  {mot:"chapeau",  phon:"chapo",   son:"chapo", emoji:"🎩", def:"couvre-chef"},
+  {mot:"château",  phon:"chato",   son:"chato", emoji:"🏰", def:"grande demeure"},
+  {mot:"cheval",   phon:"cheval",  son:"cheval",emoji:"🐴", def:"animal"},
+  {mot:"chien",    phon:"chien",   son:"chien", emoji:"🐶", def:"animal"},
+  {mot:"chocolat", phon:"chokola", son:"chokola",emoji:"🍫",def:"aliment sucré"},
+  {mot:"chambre",  phon:"chambr",  son:"chambr",emoji:"🛏️",def:"pièce pour dormir"},
+  {mot:"chanson",  phon:"chanson", son:"chanson",emoji:"🎶",def:"musique chantée"},
+
+  {mot:"table",    phon:"tabl",    son:"tabl",  emoji:"🪑", def:"meuble"},
+  {mot:"tasse",    phon:"tas",     son:"tas",   emoji:"☕", def:"récipient"},
+  {mot:"train",    phon:"trin",    son:"trin",  emoji:"🚂", def:"transport"},
+  {mot:"tortue",   phon:"tortu",   son:"tortu", emoji:"🐢", def:"animal"},
+  {mot:"tulipe",   phon:"tulip",   son:"tulip", emoji:"🌷", def:"fleur"},
+  {mot:"tomate",   phon:"tomat",   son:"tomat", emoji:"🍅", def:"légume"},
+
+  {mot:"maison",   phon:"mezon",   son:"mezon", emoji:"🏠", def:"habitation"},
+  {mot:"maman",    phon:"maman",   son:"maman", emoji:"👩", def:"mère"},
+  {mot:"mouton",   phon:"mouton",  son:"mouton",emoji:"🐑", def:"animal"},
+  {mot:"montagne", phon:"montagn", son:"montagn",emoji:"⛰️",def:"relief"},
+  {mot:"musique",  phon:"muzik",   son:"muzik", emoji:"🎵", def:"art des sons"},
+  {mot:"mouche",   phon:"mouch",   son:"mouch", emoji:"🪰", def:"insecte"},
+  {mot:"miroir",   phon:"miroir",  son:"miroir",emoji:"🪞", def:"objet réfléchissant"},
+  {mot:"manteau",  phon:"manto",   son:"manto", emoji:"🧥", def:"vêtement"},
+
+  {mot:"lapin",    phon:"lapin",   son:"lapin", emoji:"🐰", def:"animal"},
+  {mot:"lune",     phon:"lun",     son:"lun",   emoji:"🌙", def:"satellite"},
+  {mot:"lion",     phon:"lion",    son:"lion",  emoji:"🦁", def:"animal"},
+  {mot:"livre",    phon:"livr",    son:"livr",  emoji:"📚", def:"objet à lire"},
+  {mot:"lumière",  phon:"lumier",  son:"lumier",emoji:"💡", def:"clarté"},
+  {mot:"lettre",   phon:"letr",    son:"letr",  emoji:"✉️", def:"message écrit"},
+  {mot:"lézard",   phon:"lezar",   son:"lezar", emoji:"🦎", def:"reptile"},
+
+  {mot:"papa",     phon:"papa",    son:"papa",  emoji:"👨", def:"père"},
+  {mot:"papillon", phon:"papiyon", son:"papiyon",emoji:"🦋",def:"insecte"},
+  {mot:"pain",     phon:"pin",     son:"pin",   emoji:"🍞", def:"aliment"},
+  {mot:"pluie",    phon:"plui",    son:"plui",  emoji:"🌧️", def:"eau qui tombe"},
+  {mot:"poisson",  phon:"poason",  son:"poason",emoji:"🐟", def:"animal aquatique"},
+  {mot:"pomme",    phon:"pom",     son:"pom",   emoji:"🍎", def:"fruit"},
+  {mot:"photo",    phon:"foto",    son:"foto",  emoji:"📷", def:"image"},
+  {mot:"plage",    phon:"plaj",    son:"plaj",  emoji:"🏖️", def:"bord de mer"},
+
+  {mot:"bateau",   phon:"bato",    son:"bato",  emoji:"⛵", def:"embarcation"},
+  {mot:"ballon",   phon:"balon",   son:"balon", emoji:"🎈", def:"objet gonflé"},
+  {mot:"bébé",     phon:"bebe",    son:"bebe",  emoji:"👶", def:"très jeune enfant"},
+  {mot:"biscuit",  phon:"biskui",  son:"biskui",emoji:"🍪", def:"gâteau sec"},
+  {mot:"banane",   phon:"banan",   son:"banan", emoji:"🍌", def:"fruit"},
+  {mot:"biberon",  phon:"biberon", son:"biberon",emoji:"🍼",def:"bouteille bébé"},
+
+  {mot:"soleil",   phon:"solei",   son:"solei", emoji:"☀️", def:"étoile"},
+  {mot:"souris",   phon:"souri",   son:"souri", emoji:"🐭", def:"petit animal"},
+  {mot:"sapin",    phon:"sapin",   son:"sapin", emoji:"🌲", def:"arbre"},
+  {mot:"sac",      phon:"sak",     son:"sak",   emoji:"👜", def:"contenant"},
+  {mot:"serpent",  phon:"serpen",  son:"serpen",emoji:"🐍", def:"reptile"},
+
+  {mot:"fleur",    phon:"fleur",   son:"fleur", emoji:"🌸", def:"partie d'une plante"},
+  {mot:"forêt",    phon:"fore",    son:"fore",  emoji:"🌲", def:"bois dense"},
+  {mot:"fromage",  phon:"fromaj",  son:"fromaj",emoji:"🧀", def:"aliment lacté"},
+  {mot:"fraise",   phon:"frez",    son:"frez",  emoji:"🍓", def:"fruit rouge"},
+  {mot:"fusée",    phon:"fuze",    son:"fuze",  emoji:"🚀", def:"engin spatial"},
+  {mot:"fenêtre",  phon:"fenetr",  son:"fenetr",emoji:"🪟", def:"ouverture vitrée"},
+  {mot:"feu",      phon:"feu",     son:"feu",   emoji:"🔥", def:"flamme"},
+
+  {mot:"éléphant", phon:"elefan",  son:"elefan",emoji:"🐘", def:"grand animal"},
+  {mot:"école",    phon:"ekol",    son:"ekol",  emoji:"🏫", def:"lieu d'apprentissage"},
+  {mot:"étoile",   phon:"etoal",   son:"etoal", emoji:"⭐", def:"astre"},
+  {mot:"escargot", phon:"eskargo", son:"eskargo",emoji:"🐌",def:"mollusque"},
+
+  {mot:"gâteau",   phon:"gato",    son:"gato",  emoji:"🎂", def:"pâtisserie"},
+  {mot:"grenouille",phon:"grenui", son:"grenui",emoji:"🐸", def:"amphibien"},
+  {mot:"girafe",   phon:"jiraf",   son:"jiraf", emoji:"🦒", def:"grand animal"},
+  {mot:"glace",    phon:"glas",    son:"glas",  emoji:"🧊", def:"eau gelée / dessert"},
+  {mot:"guitare",  phon:"gitar",   son:"gitar", emoji:"🎸", def:"instrument"},
+
+  {mot:"jardin",   phon:"jardin",  son:"jardin",emoji:"🌻", def:"espace cultivé"},
+  {mot:"jus",      phon:"ju",      son:"ju",    emoji:"🥤", def:"boisson"},
+  {mot:"jeu",      phon:"jeu",     son:"jeu",   emoji:"🎮", def:"activité ludique"},
+
+  {mot:"roi",      phon:"roa",     son:"roa",   emoji:"👑", def:"souverain"},
+  {mot:"robot",    phon:"robo",    son:"robo",  emoji:"🤖", def:"machine"},
+  {mot:"rose",     phon:"roz",     son:"roz",   emoji:"🌹", def:"fleur"},
+  {mot:"renard",   phon:"renar",   son:"renar", emoji:"🦊", def:"animal"},
+  {mot:"raisin",   phon:"rezin",   son:"rezin", emoji:"🍇", def:"fruit"},
+  {mot:"requin",   phon:"rekin",   son:"rekin", emoji:"🦈", def:"poisson"},
+
+  {mot:"nuage",    phon:"nuaj",    son:"nuaj",  emoji:"☁️", def:"formation vapeur"},
+  {mot:"nuit",     phon:"nui",     son:"nui",   emoji:"🌙", def:"période sombre"},
+  {mot:"neige",    phon:"nej",     son:"nej",   emoji:"❄️", def:"eau gelée"},
+
+  {mot:"voiture",  phon:"voitur",  son:"voitur",emoji:"🚗", def:"véhicule"},
+  {mot:"vache",    phon:"vach",    son:"vach",  emoji:"🐄", def:"animal"},
+  {mot:"vélo",     phon:"velo",    son:"velo",  emoji:"🚲", def:"bicyclette"},
+
+  {mot:"cerise",   phon:"seriz",   son:"seriz", emoji:"🍒", def:"fruit rouge"},
+  {mot:"canard",   phon:"kanar",   son:"kanar", emoji:"🦆", def:"oiseau"},
+  {mot:"cadeau",   phon:"kado",    son:"kado",  emoji:"🎁", def:"présent"},
+  {mot:"coccinelle",phon:"kosinell",son:"kosinell",emoji:"🐞",def:"insecte"},
+  {mot:"couleur",  phon:"kuleur",  son:"kuleur",emoji:"🎨", def:"teinte"},
+
+  {mot:"dauphin",  phon:"dofin",   son:"dofin", emoji:"🐬", def:"mammifère marin"},
+  {mot:"dinosaure",phon:"dinozor", son:"dinozor",emoji:"🦕",def:"animal préhistorique"},
+  {mot:"dragon",   phon:"dragon",  son:"dragon",emoji:"🐉", def:"créature légendaire"},
+
+  {mot:"hibou",    phon:"ibou",    son:"ibou",  emoji:"🦉", def:"oiseau nocturne"},
+  {mot:"hérisson", phon:"erisson", son:"erisson",emoji:"🦔",def:"animal à piquants"},
+
+  {mot:"kangourou",phon:"kanguru", son:"kanguru",emoji:"🦘",def:"marsupial"},
+  {mot:"koala",    phon:"koala",   son:"koala", emoji:"🐨", def:"marsupial australien"},
+
+  {mot:"ours",     phon:"ours",    son:"ours",  emoji:"🐻", def:"grand mammifère"},
+  {mot:"oiseau",   phon:"oazo",    son:"oazo",  emoji:"🐦", def:"animal ailé"},
+  {mot:"orange",   phon:"oranJ",   son:"oranJ", emoji:"🍊", def:"fruit"},
+
+  {mot:"pingouin", phon:"pinguin", son:"pinguin",emoji:"🐧",def:"oiseau polaire"},
+  {mot:"pieuvre",  phon:"pievr",   son:"pievr", emoji:"🐙", def:"mollusque marin"},
+  {mot:"pizza",    phon:"pidza",   son:"pidza", emoji:"🍕", def:"plat italien"},
+  {mot:"panda",    phon:"panda",   son:"panda", emoji:"🐼", def:"ours d'Asie"},
+
+  {mot:"tigre",    phon:"tigr",    son:"tigr",  emoji:"🐯", def:"félin"},
+  {mot:"toile",    phon:"toal",    son:"toal",  emoji:"🕸️", def:"tissu d'araignée"},
+
+  {mot:"zèbre",    phon:"zebr",    son:"zebr",  emoji:"🦓", def:"animal rayé"},
+];
+
+// ============================================
+// MOTEUR PHONÉTIQUE
+// ============================================
+
+// Table de conversion phonétique
+// L'élève tape → on normalise en "son"
+function normaliserPhon(texte) {
+  let s = texte.toLowerCase();
+  
+  // Digraphes et trigraphes d'abord !
+  s = s.replace(/eau/g, "o");
+  s = s.replace(/ain|aim|ein|eim/g, "in");
+  s = s.replace(/an|am|en|em/g, "an");
+  s = s.replace(/on|om/g, "on");
+  s = s.replace(/ou/g, "ou");
+  s = s.replace(/oi/g, "oa");
+  s = s.replace(/au/g, "o");
+  s = s.replace(/eu|oeu/g, "eu");
+  s = s.replace(/ph/g, "f");
+  s = s.replace(/ch/g, "ch");
+  s = s.replace(/gn/g, "ny");
+  s = s.replace(/qu|ck/g, "k");
+  s = s.replace(/ill|il$/g, "y");
+  s = s.replace(/ail|eil|euil|ouil/g, "y");
+  
+  // Lettres simples
+  s = s.replace(/[éèêë]/g, "e");
+  s = s.replace(/[àâ]/g, "a");
+  s = s.replace(/[îï]/g, "i");
+  s = s.replace(/[ôö]/g, "o");
+  s = s.replace(/[ûü]/g, "u");
+  s = s.replace(/ç/g, "s");
+  s = s.replace(/[sz]$/g, "");   // lettres muettes finales
+  s = s.replace(/[td]$/g, "");
+  s = s.replace(/[x]$/g, "");
+  s = s.replace(/c([aou])/g, "k$1");
+  s = s.replace(/c([ei])/g, "s$1");
+  s = s.replace(/g([ei])/g, "j$1");
+  s = s.replace(/y/g, "i");
+  s = s.replace(/w/g, "v");
+  
+  return s;
+}
+
+function calculerScore(saisieNorm, motPhon) {
+  // Score basé sur combien de caractères correspondent au début
+  const minLen = Math.min(saisieNorm.length, motPhon.length);
+  let score = 0;
+  
+  for (let i = 0; i < minLen; i++) {
+    if (saisieNorm[i] === motPhon[i]) {
+      score += (i === 0) ? 3 : 1; // Premier caractère vaut plus
+    } else {
+      break;
+    }
+  }
+  
+  // Bonus si la longueur est similaire
+  const diffLen = Math.abs(saisieNorm.length - motPhon.length);
+  if (diffLen <= 1) score += 2;
+  if (diffLen === 0) score += 1;
+  
+  // Bonus si contient la saisie
+  if (motPhon.startsWith(saisieNorm)) score += 5;
+  if (motPhon.includes(saisieNorm)) score += 2;
+  
+  return score;
+}
+
+function chercherMots(saisie) {
+  if (saisie.length < 1) return [];
+  
+  const saisieNorm = normaliserPhon(saisie);
+  
+  const resultats = MOTS
+    .map(m => ({
+      ...m,
+      score: calculerScore(saisieNorm, m.phon)
+    }))
+    .filter(m => m.score > 2)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 12);
+  
+  return resultats;
+}
+
+// ============================================
+// INTERFACE
+// ============================================
+
+let saisie = "";
+
+function mettreAJour() {
+  const affMot = document.getElementById('affichageMot');
+  const affPhon = document.getElementById('affichagePhon');
+  
+  if (saisie === "") {
+    affMot.textContent = "_";
+    affPhon.textContent = "";
+  } else {
+    affMot.textContent = saisie.toUpperCase();
+    affPhon.textContent = "→ je comprends : " + normaliserPhon(saisie);
+  }
+  
+  afficherResultats();
+}
+
+function afficherResultats() {
+  const grille = document.getElementById('grilleMots');
+  const titre = document.getElementById('resultatsTitre');
+  
+  if (saisie.length === 0) {
+    grille.innerHTML = `<div class="msg-accueil"><span>⌨️</span>Commence à taper un mot !</div>`;
+    titre.textContent = "";
+    return;
+  }
+  
+  const mots = chercherMots(saisie);
+  
+  if (mots.length === 0) {
+    grille.innerHTML = `<div class="msg-accueil"><span>🤔</span>Aucun mot trouvé... Essaie autrement !</div>`;
+    titre.textContent = "";
+    return;
+  }
+  
+  titre.textContent = `✨ ${mots.length} mot(s) trouvé(s) — Clique pour entendre !`;
+  grille.innerHTML = "";
+  
+  mots.forEach((m, i) => {
+    const carte = document.createElement('div');
+    carte.className = 'carte-mot';
+    carte.style.animationDelay = (i * 0.05) + 's';
+    carte.innerHTML = `
+      <span class="carte-emoji">${m.emoji}</span>
+      <span class="carte-texte">${m.mot}</span>
+      <span class="carte-syllabe">${m.def}</span>
+      <span class="badge">🔊 écouter</span>
+    `;
+    carte.onclick = () => {
+      prononcerMot(m.mot, carte);
+    };
+    grille.appendChild(carte);
+  });
+}
+
+function ajouterLettre(lettre) {
+  if (saisie.length < 20) {
+    saisie += lettre;
+    mettreAJour();
+  }
+}
+
+function supprimerLettre() {
+  saisie = saisie.slice(0, -1);
+  mettreAJour();
+}
+
+function toutEffacer() {
+  saisie = "";
+  mettreAJour();
+}
+
+function prononcerMot(mot, carte) {
+  if ('speechSynthesis' in window) {
+    const u = new SpeechSynthesisUtterance(mot);
+    u.lang = 'fr-FR';
+    u.rate = 0.75;
+    u.pitch = 1.1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+    
+    if (carte) {
+      carte.classList.add('joue');
+      setTimeout(() => carte.classList.remove('joue'), 1500);
+    }
+  }
+}
+
+// Clavier physique
+document.addEventListener('keydown', (e) => {
+  const touche = e.key.toLowerCase();
+  if (/^[a-z]$/.test(touche)) {
+    ajouterLettre(touche);
+  } else if (e.key === 'Backspace') {
+    supprimerLettre();
+  } else if (e.key === 'Escape') {
+    toutEffacer();
+  }
+});
+
+// Init
+mettreAJour();
+</script>
+</body>
+</html>
