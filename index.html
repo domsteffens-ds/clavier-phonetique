@@ -6,757 +6,285 @@
 <title>Clavier Phonétique Français</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { 
-  font-family: 'Arial Rounded MT Bold', Arial, sans-serif; 
+body {
+  font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh; padding: 15px;
 }
-
-h1 { 
-  text-align: center; color: white; 
-  padding: 15px; font-size: 1.6em;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
-
-.app-container {
-  max-width: 800px; margin: 0 auto;
-}
-
-/* ZONE D'AFFICHAGE MOT */
-.word-display {
+h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
+.app { max-width: 750px; margin: 0 auto; }
+.display-box {
   background: white; border-radius: 15px;
   padding: 20px; margin-bottom: 15px;
   text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
-.word-typed {
-  font-size: 2.5em; font-weight: bold;
-  color: #2c3e50; letter-spacing: 5px;
-  min-height: 60px; padding: 10px;
-  border-bottom: 3px solid #3498db;
-  margin-bottom: 10px;
+.word-screen {
+  font-size: 2.8em; font-weight: bold; color: #2c3e50;
+  letter-spacing: 8px; min-height: 70px; padding: 10px;
+  border-bottom: 3px solid #3498db; margin-bottom: 15px;
+  word-break: break-all;
 }
-.word-hint { 
-  color: #7f8c8d; font-size: 0.9em;
-  margin-bottom: 10px;
+.cursor { animation: blink 1s infinite; color: #3498db; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  padding: 10px 18px; border: none; border-radius: 10px;
+  font-size: 0.95em; font-weight: bold; cursor: pointer; transition: transform 0.1s;
 }
-
-/* BOUTONS ACTION */
-.action-buttons {
-  display: flex; gap: 10px; justify-content: center;
-  flex-wrap: wrap; margin-top: 10px;
+.btn:active { transform: scale(0.95); }
+.btn-mic { background: #27ae60; color: white; }
+.btn-mic.on { background: #e74c3c; animation: pulse 1s infinite; }
+.btn-del { background: #e74c3c; color: white; }
+.btn-clear { background: #95a5a6; color: white; }
+.btn-search { background: #3498db; color: white; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+.mic-status { text-align: center; color: #e74c3c; font-size: 0.85em; margin-top: 5px; min-height: 20px; }
+.keyboard { background: #2c3e50; border-radius: 15px; padding: 12px; margin-bottom: 15px; }
+.row { display: flex; justify-content: center; gap: 5px; margin-bottom: 5px; }
+.k {
+  width: 55px; height: 52px; background: white; border: none;
+  border-radius: 7px; font-size: 1.1em; font-weight: bold; color: #2c3e50;
+  cursor: pointer; box-shadow: 0 3px 0 #aaa; transition: all 0.1s;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
-.btn-effacer {
-  background: #e74c3c; color: white;
-  border: none; padding: 10px 20px;
-  border-radius: 10px; font-size: 1em;
-  cursor: pointer; font-weight: bold;
+.k:hover { background: #3498db; color: white; }
+.k:active { transform: translateY(2px); box-shadow: 0 1px 0 #aaa; }
+.k.accent { background: #ffeaa7; }
+.k.accent:hover { background: #fdcb6e; }
+.k.wide { width: 80px; }
+.k.space { width: 260px; font-size: 0.8em; color: #888; background: #ecf0f1; }
+.results-box {
+  background: white; border-radius: 15px; padding: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: none;
 }
-.btn-effacer:hover { background: #c0392b; }
-.btn-effacer-tout {
-  background: #95a5a6; color: white;
-  border: none; padding: 10px 20px;
-  border-radius: 10px; font-size: 1em;
-  cursor: pointer; font-weight: bold;
+.results-box.visible { display: block; }
+.results-title { text-align: center; font-weight: bold; color: #2c3e50; margin-bottom: 12px; }
+.results-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.card {
+  background: #f8f9fa; border-radius: 10px; padding: 10px 15px;
+  cursor: pointer; border: 2px solid transparent; text-align: center; transition: all 0.2s;
 }
-.btn-micro {
-  background: #27ae60; color: white;
-  border: none; padding: 10px 20px;
-  border-radius: 10px; font-size: 1em;
-  cursor: pointer; font-weight: bold;
-}
-.btn-micro.active { background: #e74c3c; animation: pulse 1s infinite; }
-.btn-chercher {
-  background: #3498db; color: white;
-  border: none; padding: 10px 25px;
-  border-radius: 10px; font-size: 1em;
-  cursor: pointer; font-weight: bold;
-}
-.btn-chercher:hover { background: #2980b9; }
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* CLAVIER AZERTY */
-.keyboard-container {
-  background: #2c3e50; border-radius: 15px;
-  padding: 15px; margin-bottom: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-.keyboard-row {
-  display: flex; justify-content: center;
-  gap: 6px; margin-bottom: 6px;
-}
-.key {
-  background: white; border: none;
-  border-radius: 8px; padding: 0;
-  width: 58px; height: 55px;
-  font-size: 1.1em; font-weight: bold;
-  cursor: pointer; color: #2c3e50;
-  box-shadow: 0 4px 0 #bdc3c7;
-  transition: all 0.1s;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-}
-.key:hover { background: #3498db; color: white; }
-.key:active { 
-  transform: translateY(3px); 
-  box-shadow: 0 1px 0 #bdc3c7;
-}
-.key .top-char { font-size: 0.65em; color: #e74c3c; height: 14px; }
-.key .main-char { font-size: 1.1em; }
-.key-wide { width: 85px; }
-.key-space { 
-  width: 280px; background: #ecf0f1;
-  font-size: 0.8em; color: #7f8c8d;
-}
-.key-accent {
-  background: #ffeaa7; color: #2c3e50;
-}
-.key-accent:hover { background: #fdcb6e; color: #2c3e50; }
-
-/* RÉSULTATS */
-.results-container {
-  background: white; border-radius: 15px;
-  padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-.results-title {
-  font-size: 1.1em; color: #2c3e50;
-  font-weight: bold; margin-bottom: 10px;
-  text-align: center;
-}
-.results-grid {
-  display: flex; flex-wrap: wrap;
-  gap: 8px; justify-content: center;
-}
-.word-card {
-  background: #f8f9fa; border-radius: 10px;
-  padding: 12px 18px; cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.2s; text-align: center;
-}
-.word-card:hover { 
-  border-color: #3498db; 
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(52,152,219,0.3);
-}
-.word-card .emoji { font-size: 1.8em; display: block; }
-.word-card .w { font-size: 1em; font-weight: bold; color: #2c3e50; }
-.word-card .niveau { 
-  font-size: 0.7em; color: white;
-  background: #3498db; border-radius: 10px;
-  padding: 1px 6px; margin-top: 3px;
-  display: inline-block;
-}
-.no-result { 
-  text-align: center; color: #e74c3c;
-  padding: 20px; font-size: 1em; width: 100%;
-}
-
-.status-bar {
-  text-align: center; color: rgba(255,255,255,0.8);
-  font-size: 0.85em; margin-bottom: 10px;
-}
+.card:hover { border-color: #3498db; transform: translateY(-2px); }
+.card .em { font-size: 1.8em; display: block; }
+.card .wrd { font-weight: bold; color: #2c3e50; font-size: 0.95em; }
+.card .lvl { font-size: 0.7em; background: #3498db; color: white; border-radius: 8px; padding: 1px 5px; display: inline-block; margin-top: 2px; }
+.no-result { text-align: center; color: #e74c3c; padding: 15px; width: 100%; }
+.counter { text-align: center; color: white; font-size: 0.85em; padding: 8px; }
 </style>
 </head>
 <body>
-
-<div class="app-container">
+<div class="app">
   <h1>🔤 Clavier Phonétique Français</h1>
-  <div class="status-bar" id="statusBar">Tape un mot comme tu l'entends 🎧</div>
-
-  <!-- AFFICHAGE DU MOT -->
-  <div class="word-display">
-    <div class="word-typed" id="wordDisplay">_</div>
-    <div class="word-hint">Écris le mot lettre par lettre ou parle dans le micro 🎤</div>
-    <div class="action-buttons">
-      <button class="btn-micro" id="microBtn" onclick="toggleMicro()">🎤 Dicter</button>
-      <button class="btn-effacer" onclick="effacerLettre()">⌫ Effacer</button>
-      <button class="btn-effacer-tout" onclick="effacerTout()">🗑️ Tout effacer</button>
-      <button class="btn-chercher" onclick="rechercherMot()">🔍 Chercher</button>
+  <div class="display-box">
+    <div class="word-screen" id="screen"><span class="cursor">|</span></div>
+    <div class="mic-status" id="micStatus"></div>
+    <div class="btns">
+      <button class="btn btn-mic" id="micBtn" onclick="toggleMic()">🎤 Dicter</button>
+      <button class="btn btn-del" onclick="delLetter()">⌫ Effacer</button>
+      <button class="btn btn-clear" onclick="clearAll()">🗑️ Tout effacer</button>
+      <button class="btn btn-search" onclick="searchWord()">🔍 Chercher</button>
     </div>
   </div>
 
-  <!-- CLAVIER AZERTY -->
-  <div class="keyboard-container">
-    <!-- Rangée 1 : chiffres -->
-    <div class="keyboard-row">
-      <button class="key" onclick="ajouterLettre('1')"><span class="top-char">&amp;</span><span class="main-char">1</span></button>
-      <button class="key" onclick="ajouterLettre('2')"><span class="top-char">é</span><span class="main-char">2</span></button>
-      <button class="key" onclick="ajouterLettre('3')"><span class="top-char">"</span><span class="main-char">3</span></button>
-      <button class="key" onclick="ajouterLettre('4')"><span class="top-char">'</span><span class="main-char">4</span></button>
-      <button class="key" onclick="ajouterLettre('5')"><span class="top-char">(</span><span class="main-char">5</span></button>
-      <button class="key" onclick="ajouterLettre('6')"><span class="top-char">-</span><span class="main-char">6</span></button>
-      <button class="key" onclick="ajouterLettre('7')"><span class="top-char">è</span><span class="main-char">7</span></button>
-      <button class="key" onclick="ajouterLettre('8')"><span class="top-char">_</span><span class="main-char">8</span></button>
-      <button class="key" onclick="ajouterLettre('9')"><span class="top-char">ç</span><span class="main-char">9</span></button>
-      <button class="key" onclick="ajouterLettre('0')"><span class="top-char">à</span><span class="main-char">0</span></button>
+  <div class="keyboard">
+    <div class="row">
+      <button class="k" onclick="add('a')">A</button>
+      <button class="k" onclick="add('z')">Z</button>
+      <button class="k" onclick="add('e')">E</button>
+      <button class="k" onclick="add('r')">R</button>
+      <button class="k" onclick="add('t')">T</button>
+      <button class="k" onclick="add('y')">Y</button>
+      <button class="k" onclick="add('u')">U</button>
+      <button class="k" onclick="add('i')">I</button>
+      <button class="k" onclick="add('o')">O</button>
+      <button class="k" onclick="add('p')">P</button>
     </div>
-    <!-- Rangée 2 : AZERTYUIOP -->
-    <div class="keyboard-row">
-      <button class="key" onclick="ajouterLettre('a')"><span class="top-char"></span><span class="main-char">A</span></button>
-      <button class="key" onclick="ajouterLettre('z')"><span class="top-char"></span><span class="main-char">Z</span></button>
-      <button class="key" onclick="ajouterLettre('e')"><span class="top-char"></span><span class="main-char">E</span></button>
-      <button class="key" onclick="ajouterLettre('r')"><span class="top-char"></span><span class="main-char">R</span></button>
-      <button class="key" onclick="ajouterLettre('t')"><span class="top-char"></span><span class="main-char">T</span></button>
-      <button class="key" onclick="ajouterLettre('y')"><span class="top-char"></span><span class="main-char">Y</span></button>
-      <button class="key" onclick="ajouterLettre('u')"><span class="top-char"></span><span class="main-char">U</span></button>
-      <button class="key" onclick="ajouterLettre('i')"><span class="top-char"></span><span class="main-char">I</span></button>
-      <button class="key" onclick="ajouterLettre('o')"><span class="top-char"></span><span class="main-char">O</span></button>
-      <button class="key" onclick="ajouterLettre('p')"><span class="top-char"></span><span class="main-char">P</span></button>
+    <div class="row">
+      <button class="k" onclick="add('q')">Q</button>
+      <button class="k" onclick="add('s')">S</button>
+      <button class="k" onclick="add('d')">D</button>
+      <button class="k" onclick="add('f')">F</button>
+      <button class="k" onclick="add('g')">G</button>
+      <button class="k" onclick="add('h')">H</button>
+      <button class="k" onclick="add('j')">J</button>
+      <button class="k" onclick="add('k')">K</button>
+      <button class="k" onclick="add('l')">L</button>
+      <button class="k" onclick="add('m')">M</button>
     </div>
-    <!-- Rangée 3 : QSDFGHJKL -->
-    <div class="keyboard-row">
-      <button class="key" onclick="ajouterLettre('q')"><span class="top-char"></span><span class="main-char">Q</span></button>
-      <button class="key" onclick="ajouterLettre('s')"><span class="top-char"></span><span class="main-char">S</span></button>
-      <button class="key" onclick="ajouterLettre('d')"><span class="top-char"></span><span class="main-char">D</span></button>
-      <button class="key" onclick="ajouterLettre('f')"><span class="top-char"></span><span class="main-char">F</span></button>
-      <button class="key" onclick="ajouterLettre('g')"><span class="top-char"></span><span class="main-char">G</span></button>
-      <button class="key" onclick="ajouterLettre('h')"><span class="top-char"></span><span class="main-char">H</span></button>
-      <button class="key" onclick="ajouterLettre('j')"><span class="top-char"></span><span class="main-char">J</span></button>
-      <button class="key" onclick="ajouterLettre('k')"><span class="top-char"></span><span class="main-char">K</span></button>
-      <button class="key" onclick="ajouterLettre('l')"><span class="top-char"></span><span class="main-char">L</span></button>
-      <button class="key" onclick="ajouterLettre('m')"><span class="top-char"></span><span class="main-char">M</span></button>
+    <div class="row">
+      <button class="k" onclick="add('w')">W</button>
+      <button class="k" onclick="add('x')">X</button>
+      <button class="k" onclick="add('c')">C</button>
+      <button class="k" onclick="add('v')">V</button>
+      <button class="k" onclick="add('b')">B</button>
+      <button class="k" onclick="add('n')">N</button>
+      <button class="k wide" onclick="delLetter()">⌫</button>
     </div>
-    <!-- Rangée 4 : WXCVBN -->
-    <div class="keyboard-row">
-      <button class="key" onclick="ajouterLettre('w')"><span class="top-char"></span><span class="main-char">W</span></button>
-      <button class="key" onclick="ajouterLettre('x')"><span class="top-char"></span><span class="main-char">X</span></button>
-      <button class="key" onclick="ajouterLettre('c')"><span class="top-char"></span><span class="main-char">C</span></button>
-      <button class="key" onclick="ajouterLettre('v')"><span class="top-char"></span><span class="main-char">V</span></button>
-      <button class="key" onclick="ajouterLettre('b')"><span class="top-char"></span><span class="main-char">B</span></button>
-      <button class="key" onclick="ajouterLettre('n')"><span class="top-char"></span><span class="main-char">N</span></button>
-      <button class="key key-wide" onclick="effacerLettre()">⌫</button>
+    <div class="row">
+      <button class="k accent" onclick="add('é')">É</button>
+      <button class="k accent" onclick="add('è')">È</button>
+      <button class="k accent" onclick="add('ê')">Ê</button>
+      <button class="k accent" onclick="add('à')">À</button>
+      <button class="k accent" onclick="add('â')">Â</button>
+      <button class="k accent" onclick="add('ù')">Ù</button>
+      <button class="k accent" onclick="add('û')">Û</button>
+      <button class="k accent" onclick="add('ô')">Ô</button>
+      <button class="k accent" onclick="add('î')">Î</button>
+      <button class="k accent" onclick="add('ç')">Ç</button>
     </div>
-    <!-- Rangée 5 : accents + espace -->
-    <div class="keyboard-row">
-      <button class="key key-accent" onclick="ajouterLettre('é')"><span class="top-char"></span><span class="main-char">É</span></button>
-      <button class="key key-accent" onclick="ajouterLettre('è')"><span class="top-char"></span><span class="main-char">È</span></button>
-      <button class="key key-accent" onclick="ajouterLettre('ê')"><span class="top-char"></span><span class="main-char">Ê</span></button>
-      <button class="key key-accent" onclick="ajouterLettre('à')"><span class="top-char"></span><span class="main-char">À</span></button>
-      <button class="key key-accent" onclick="ajouterLettre('â')"><span class="top-char"></span><span class="main-char">Â</span></button>
-      <button class="key key-accent" onclick="ajouterLettre('ù')"><span class="top-char"></span><span class="main-char">Ù</span></button>
-      <button class="key key-accent" onclick="ajouterLettre('û')"><span class="top-char"></span><span class="main-char">Û</span></button>
-      <button class="key key-accent" onclick="ajouterLettre('ô')"><span class="top-char"></span><span class="main-char">Ô</span></button>
-      <button class="key key-accent" onclick="ajouterLettre('î')"><span class="top-char"></span><span class="main-char">Î</span></button>
-      <button class="key key-accent" onclick="ajouterLettre('ç')"><span class="top-char"></span><span class="main-char">Ç</span></button>
-    </div>
-    <!-- Espace -->
-    <div class="keyboard-row">
-      <button class="key key-space" onclick="ajouterLettre(' ')">espace</button>
+    <div class="row">
+      <button class="k space" onclick="add(' ')">espace</button>
     </div>
   </div>
 
-  <!-- RÉSULTATS -->
-  <div class="results-container">
-    <div class="results-title" id="resultsTitle">🔍 Les mots apparaîtront ici</div>
-    <div class="results-grid" id="results"></div>
+  <div class="results-box" id="resultsBox">
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-grid" id="resultsGrid"></div>
   </div>
+  <div class="counter" id="counter">⏳ Chargement des mots...</div>
 </div>
 
-<script>
-// ============================================================
-// BASE DE DONNÉES - 560 mots VOB + extensions fréquentes
-// ============================================================
-const words = [
-  // Format: { w: mot, p: phonétique, e: emoji, n: niveau }
+<!-- Le fichier words.js sera chargé ici -->
+<script src="words.js"></script>
 
-  // A
-  {w:"à",p:"a",e:"📍",n:"P1"},
-  {w:"abord",p:"abor",e:"1️⃣",n:"P2"},
-  {w:"acheter",p:"achté",e:"🛒",n:"P2"},
-  {w:"action",p:"aksion",e:"⚡",n:"P3"},
-  {w:"adresser",p:"adresé",e:"📬",n:"P3"},
-  {w:"affaire",p:"afèr",e:"💼",n:"P3"},
-  {w:"afin",p:"afin",e:"🎯",n:"P3"},
-  {w:"âge",p:"aj",e:"🎂",n:"P1"},
-  {w:"agir",p:"ajir",e:"🏃",n:"P3"},
-  {w:"aimer",p:"emé",e:"❤️",n:"P1"},
-  {w:"ainsi",p:"ènsi",e:"✅",n:"P3"},
-  {w:"air",p:"èr",e:"💨",n:"P2"},
-  {w:"ajouter",p:"ajouté",e:"➕",n:"P2"},
-  {w:"aller",p:"alé",e:"🚶",n:"P1"},
-  {w:"alors",p:"alor",e:"💡",n:"P1"},
-  {w:"amener",p:"amné",e:"🤝",n:"P2"},
-  {w:"ami",p:"ami",e:"👫",n:"P1"},
-  {w:"amour",p:"amour",e:"💕",n:"P1"},
-  {w:"amuser",p:"amuzé",e:"😄",n:"P1"},
-  {w:"an",p:"an",e:"📅",n:"P1"},
-  {w:"ancien",p:"ansian",e:"🏛️",n:"P3"},
-  {w:"animal",p:"animal",e:"🐾",n:"P1"},
-  {w:"année",p:"ané",e:"📆",n:"P1"},
-  {w:"annoncer",p:"anosé",e:"📢",n:"P3"},
-  {w:"apercevoir",p:"apèrsvwar",e:"👀",n:"P4"},
-  {w:"appeler",p:"aplé",e:"📞",n:"P1"},
-  {w:"apporter",p:"aporté",e:"📦",n:"P2"},
-  {w:"apprendre",p:"aprandr",e:"📚",n:"P2"},
-  {w:"approcher",p:"aproshé",e:"🚶",n:"P2"},
-  {w:"après",p:"aprè",e:"⏩",n:"P1"},
-  {w:"arbre",p:"arbr",e:"🌳",n:"P1"},
-  {w:"argent",p:"arjan",e:"💰",n:"P2"},
-  {w:"arrêter",p:"areté",e:"🛑",n:"P2"},
-  {w:"arriver",p:"arivé",e:"🏁",n:"P1"},
-  {w:"asseoir",p:"aswir",e:"💺",n:"P2"},
-  {w:"assez",p:"asé",e:"✋",n:"P2"},
-  {w:"assurer",p:"asuré",e:"🛡️",n:"P3"},
-  {w:"attendre",p:"atandr",e:"⏳",n:"P2"},
-  {w:"au",p:"o",e:"📍",n:"P1"},
-  {w:"aucun",p:"okun",e:"0️⃣",n:"P2"},
-  {w:"aujourd'hui",p:"ojordui",e:"📅",n:"P1"},
-  {w:"aussi",p:"osi",e:"➕",n:"P1"},
-  {w:"aussitôt",p:"ositô",e:"⚡",n:"P2"},
-  {w:"autant",p:"otan",e:"⚖️",n:"P2"},
-  {w:"autour",p:"otour",e:"🔄",n:"P2"},
-  {w:"autre",p:"otr",e:"2️⃣",n:"P1"},
-  {w:"avancer",p:"avansé",e:"⏩",n:"P2"},
-  {w:"avant",p:"avan",e:"⬅️",n:"P1"},
-  {w:"avec",p:"avek",e:"🤝",n:"P1"},
-  {w:"avoir",p:"avwar",e:"✋",n:"P1"},
-  // B
-  {w:"bas",p:"ba",e:"⬇️",n:"P1"},
-  {w:"battre",p:"batr",e:"👊",n:"P2"},
-  {w:"beau",p:"bo",e:"😍",n:"P1"},
-  {w:"beaucoup",p:"boku",e:"📊",n:"P1"},
-  {w:"besoin",p:"bzwan",e:"🙏",n:"P2"},
-  {w:"bête",p:"bèt",e:"🐮",n:"P1"},
-  {w:"bien",p:"byin",e:"👍",n:"P1"},
-  {w:"bientôt",p:"byento",e:"⏰",n:"P1"},
-  {w:"blanc",p:"blan",e:"⬜",n:"P1"},
-  {w:"bleu",p:"bleu",e:"🔵",n:"P1"},
-  {w:"boire",p:"bwar",e:"🥤",n:"P1"},
-  {w:"bois",p:"bwa",e:"🌲",n:"P1"},
-  {w:"bon",p:"bon",e:"👍",n:"P1"},
-  {w:"bonheur",p:"bonœr",e:"😊",n:"P2"},
-  {w:"bord",p:"bor",e:"🌊",n:"P2"},
-  {w:"bout",p:"bu",e:"📏",n:"P2"},
-  {w:"bras",p:"bra",e:"💪",n:"P1"},
-  {w:"bruit",p:"brui",e:"🔊",n:"P1"},
-  // C
-  {w:"ça",p:"sa",e:"👆",n:"P1"},
-  {w:"cacher",p:"kashé",e:"🙈",n:"P1"},
-  {w:"campagne",p:"kanpan",e:"🌾",n:"P2"},
-  {w:"car",p:"kar",e:"🚌",n:"P2"},
-  {w:"cas",p:"ka",e:"❓",n:"P3"},
-  {w:"cause",p:"koz",e:"🔗",n:"P3"},
-  {w:"ce",p:"se",e:"👆",n:"P1"},
-  {w:"cela",p:"sla",e:"👆",n:"P1"},
-  {w:"celui",p:"slui",e:"👆",n:"P2"},
-  {w:"cent",p:"san",e:"💯",n:"P2"},
-  {w:"cependant",p:"sependan",e:"↔️",n:"P3"},
-  {w:"certain",p:"sèrtin",e:"✅",n:"P2"},
-  {w:"chacun",p:"shakun",e:"👤",n:"P3"},
-  {w:"chambre",p:"shanbr",e:"🛏️",n:"P1"},
-  {w:"champ",p:"shan",e:"🌾",n:"P2"},
-  {w:"changer",p:"shanjé",e:"🔄",n:"P2"},
-  {w:"chanter",p:"shanté",e:"🎵",n:"P1"},
-  {w:"chaque",p:"shak",e:"📋",n:"P2"},
-  {w:"charger",p:"sharjé",e:"📦",n:"P2"},
-  {w:"chat",p:"sha",e:"🐱",n:"P1"},
-  {w:"chaud",p:"sho",e:"🌡️",n:"P1"},
-  {w:"chemin",p:"shmin",e:"🛤️",n:"P2"},
-  {w:"cher",p:"shèr",e:"💎",n:"P2"},
-  {w:"chercher",p:"shèrshé",e:"🔍",n:"P1"},
-  {w:"cheval",p:"shval",e:"🐴",n:"P1"},
-  {w:"chez",p:"shé",e:"🏠",n:"P1"},
-  {w:"chien",p:"shyin",e:"🐶",n:"P1"},
-  {w:"chose",p:"shôz",e:"📦",n:"P1"},
-  {w:"ciel",p:"syèl",e:"☁️",n:"P1"},
-  {w:"cinq",p:"sink",e:"5️⃣",n:"P1"},
-  {w:"classe",p:"klas",e:"🏫",n:"P1"},
-  {w:"cœur",p:"kœr",e:"❤️",n:"P1"},
-  {w:"coin",p:"kwan",e:"📐",n:"P2"},
-  {w:"combien",p:"konbyin",e:"🔢",n:"P2"},
-  {w:"comme",p:"kom",e:"🔗",n:"P1"},
-  {w:"commencer",p:"komansé",e:"▶️",n:"P2"},
-  {w:"comment",p:"koman",e:"❓",n:"P1"},
-  {w:"comprendre",p:"konprandr",e:"💡",n:"P2"},
-  {w:"compter",p:"konté",e:"🔢",n:"P2"},
-  {w:"connaitre",p:"konètr",e:"🤔",n:"P2"},
-  {w:"content",p:"kontan",e:"😊",n:"P1"},
-  {w:"continuer",p:"kontinué",e:"▶️",n:"P2"},
-  {w:"contre",p:"kontr",e:"❌",n:"P2"},
-  {w:"corps",p:"kor",e:"🧍",n:"P2"},
-  {w:"côté",p:"koté",e:"↔️",n:"P2"},
-  {w:"coucher",p:"kushé",e:"🛏️",n:"P1"},
-  {w:"couleur",p:"kulœr",e:"🎨",n:"P1"},
-  {w:"coup",p:"ku",e:"👊",n:"P2"},
-  {w:"cour",p:"kur",e:"🏫",n:"P1"},
-  {w:"courir",p:"kurir",e:"🏃",n:"P1"},
-  {w:"cours",p:"kur",e:"📚",n:"P2"},
-  {w:"couvrir",p:"kuvrir",e:"🧥",n:"P2"},
-  {w:"crier",p:"krié",e:"😤",n:"P1"},
-  {w:"croire",p:"krwar",e:"🙏",n:"P2"},
-  // D
-  {w:"dame",p:"dam",e:"👩",n:"P1"},
-  {w:"dans",p:"dan",e:"📥",n:"P1"},
-  {w:"de",p:"de",e:"📍",n:"P1"},
-  {w:"décider",p:"désidé",e:"✅",n:"P3"},
-  {w:"déjà",p:"déja",e:"✔️",n:"P2"},
-  {w:"demain",p:"dmin",e:"📅",n:"P1"},
-  {w:"demander",p:"dmandé",e:"❓",n:"P1"},
-  {w:"demi",p:"dmi",e:"½",n:"P2"},
-  {w:"depuis",p:"dpui",e:"📅",n:"P2"},
-  {w:"dernier",p:"dèrnyé",e:"🔚",n:"P2"},
-  {w:"derrière",p:"dèryèr",e:"⬅️",n:"P1"},
-  {w:"descendre",p:"désandr",e:"⬇️",n:"P2"},
-  {w:"deux",p:"deu",e:"2️⃣",n:"P1"},
-  {w:"devant",p:"dvan",e:"➡️",n:"P1"},
-  {w:"devenir",p:"dvnir",e:"🔄",n:"P3"},
-  {w:"devoir",p:"dvwar",e:"📝",n:"P2"},
-  {w:"dieu",p:"dyeu",e:"⭐",n:"P2"},
-  {w:"dimanche",p:"dimansh",e:"📅",n:"P1"},
-  {w:"dîner",p:"diné",e:"🍽️",n:"P1"},
-  {w:"dire",p:"dir",e:"💬",n:"P1"},
-  {w:"diriger",p:"dirijé",e:"🧭",n:"P3"},
-  {w:"dix",p:"dis",e:"🔟",n:"P1"},
-  {w:"donc",p:"donk",e:"➡️",n:"P2"},
-  {w:"donner",p:"doné",e:"🎁",n:"P1"},
-  {w:"dont",p:"don",e:"📌",n:"P3"},
-  {w:"dormir",p:"dormir",e:"😴",n:"P1"},
-  {w:"doute",p:"dut",e:"❓",n:"P3"},
-  {w:"doux",p:"du",e:"☁️",n:"P2"},
-  {w:"droit",p:"drwa",e:"📏",n:"P2"},
-  // E
-  {w:"eau",p:"o",e:"💧",n:"P1"},
-  {w:"école",p:"ekol",e:"🏫",n:"P1"},
-  {w:"écouter",p:"ekuté",e:"👂",n:"P1"},
-  {w:"écrire",p:"ekrir",e:"✏️",n:"P1"},
-  {w:"effet",p:"efè",e:"💥",n:"P3"},
-  {w:"élève",p:"elèv",e:"👦",n:"P1"},
-  {w:"elle",p:"el",e:"👩",n:"P1"},
-  {w:"embrasser",p:"anbrasé",e:"🤗",n:"P2"},
-  {w:"empêcher",p:"anpèshé",e:"🚫",n:"P3"},
-  {w:"emporter",p:"anporté",e:"📦",n:"P3"},
-  {w:"en",p:"an",e:"📍",n:"P1"},
-  {w:"encore",p:"ankor",e:"🔁",n:"P1"},
-  {w:"enfant",p:"anfan",e:"👶",n:"P1"},
-  {w:"enfin",p:"anfin",e:"🎉",n:"P2"},
-  {w:"ensemble",p:"ansanbl",e:"👨‍👩‍👧",n:"P2"},
-  {w:"ensuite",p:"ansui",e:"⏩",n:"P2"},
-  {w:"entendre",p:"antandr",e:"👂",n:"P2"},
-  {w:"entier",p:"antyé",e:"⭕",n:"P3"},
-  {w:"entre",p:"antr",e:"↔️",n:"P2"},
-  {w:"entrer",p:"antré",e:"🚪",n:"P1"},
-  {w:"envoyer",p:"anvwayé",e:"📨",n:"P2"},
-  {w:"espérer",p:"espèré",e:"🤞",n:"P2"},
-  {w:"esprit",p:"espri",e:"🧠",n:"P3"},
-  {w:"et",p:"é",e:"➕",n:"P1"},
-  {w:"état",p:"eta",e:"📊",n:"P3"},
-  {w:"être",p:"ètr",e:"👤",n:"P1"},
-  {w:"eux",p:"eu",e:"👥",n:"P2"},
-  // F
-  {w:"faim",p:"fin",e:"🍽️",n:"P1"},
-  {w:"faire",p:"fèr",e:"🔨",n:"P1"},
-  {w:"fait",p:"fè",e:"✅",n:"P1"},
-  {w:"falloir",p:"falwar",e:"⚠️",n:"P3"},
-  {w:"famille",p:"famiy",e:"👨‍👩‍👧",n:"P1"},
-  {w:"faux",p:"fo",e:"❌",n:"P2"},
-  {w:"femme",p:"fam",e:"👩",n:"P1"},
-  {w:"fenêtre",p:"fnètr",e:"🪟",n:"P1"},
-  {w:"fer",p:"fèr",e:"⚙️",n:"P2"},
-  {w:"fermer",p:"fèrmé",e:"🔒",n:"P1"},
-  {w:"fête",p:"fèt",e:"🎉",n:"P1"},
-  {w:"feu",p:"feu",e:"🔥",n:"P1"},
-  {w:"feuille",p:"fœy",e:"🍃",n:"P1"},
-  {w:"figure",p:"figur",e:"😊",n:"P2"},
-  {w:"fille",p:"fiy",e:"👧",n:"P1"},
-  {w:"fils",p:"fis",e:"👦",n:"P1"},
-  {w:"fin",p:"fin",e:"🔚",n:"P2"},
-  {w:"finir",p:"finir",e:"🏁",n:"P1"},
-  {w:"fleur",p:"flœr",e:"🌸",n:"P1"},
-  {w:"fois",p:"fwa",e:"🔢",n:"P2"},
-  {w:"fond",p:"fon",e:"📏",n:"P2"},
-  {w:"force",p:"fors",e:"💪",n:"P2"},
-  {w:"forêt",p:"forè",e:"🌲",n:"P1"},
-  {w:"former",p:"formé",e:"🔧",n:"P3"},
-  {w:"fort",p:"for",e:"💪",n:"P1"},
-  {w:"foule",p:"ful",e:"👥",n:"P2"},
-  {w:"frais",p:"frè",e:"❄️",n:"P2"},
-  {w:"franc",p:"fran",e:"💰",n:"P3"},
-  {w:"français",p:"fransè",e:"🇫🇷",n:"P1"},
-  {w:"frapper",p:"frapé",e:"👊",n:"P2"},
-  {w:"frère",p:"frèr",e:"👦",n:"P1"},
-  {w:"froid",p:"frwa",e:"🥶",n:"P1"},
-  // G
-  {w:"gagner",p:"ganyé",e:"🏆",n:"P2"},
-  {w:"garçon",p:"garson",e:"👦",n:"P1"},
-  {w:"garder",p:"gardé",e:"🛡️",n:"P2"},
-  {w:"gauche",p:"gosh",e:"⬅️",n:"P1"},
-  {w:"général",p:"jénéral",e:"⭐",n:"P3"},
-  {w:"gens",p:"jan",e:"👥",n:"P2"},
-  {w:"goût",p:"gu",e:"👅",n:"P2"},
-  {w:"grâce",p:"gras",e:"🙏",n:"P2"},
-  {w:"grand",p:"gran",e:"📏",n:"P1"},
-  {w:"gros",p:"gro",e:"🐘",n:"P1"},
-  {w:"guerre",p:"gèr",e:"⚔️",n:"P2"},
-  // H
-  {w:"haut",p:"o",e:"⬆️",n:"P1"},
-  {w:"heure",p:"œr",e:"⏰",n:"P1"},
-  {w:"heureux",p:"œreu",e:"😊",n:"P1"},
-  {w:"hier",p:"yèr",e:"📅",n:"P1"},
-  {w:"histoire",p:"istwir",e:"📖",n:"P1"},
-  {w:"hiver",p:"ivèr",e:"❄️",n:"P1"},
-  {w:"homme",p:"om",e:"👨",n:"P1"},
-  {w:"honneur",p:"onœr",e:"🎖️",n:"P3"},
-  {w:"huit",p:"ui",e:"8️⃣",n:"P1"},
-  // I
-  {w:"ici",p:"isi",e:"📍",n:"P1"},
-  {w:"idée",p:"idé",e:"💡",n:"P1"},
-  {w:"il",p:"il",e:"👨",n:"P1"},
-  {w:"instant",p:"instan",e:"⚡",n:"P3"},
-  {w:"intérêt",p:"intérè",e:"👀",n:"P3"},
-  // J
-  {w:"jamais",p:"jamè",e:"🚫",n:"P1"},
-  {w:"jardin",p:"jardin",e:"🌻",n:"P1"},
-  {w:"je",p:"je",e:"👤",n:"P1"},
-  {w:"jeter",p:"jté",e:"🗑️",n:"P2"},
-  {w:"jeu",p:"jeu",e:"🎮",n:"P1"},
-  {w:"jeune",p:"jeun",e:"👦",n:"P1"},
-  {w:"joie",p:"jwa",e:"😄",n:"P1"},
-  {w:"joli",p:"joli",e:"😍",n:"P1"},
-  {w:"jouer",p:"joué",e:"🎮",n:"P1"},
-  {w:"jour",p:"jour",e:"☀️",n:"P1"},
-  {w:"joyeux",p:"jwayeu",e:"🎉",n:"P1"},
-  {w:"jusque",p:"jusk",e:"📏",n:"P3"},
-  // L
-  {w:"là",p:"la",e:"📍",n:"P1"},
-  {w:"la",p:"la",e:"📍",n:"P1"},
-  {w:"laisser",p:"lèsé",e:"✋",n:"P2"},
-  {w:"leçon",p:"leson",e:"📚",n:"P1"},
-  {w:"lequel",p:"lkel",e:"❓",n:"P3"},
-  {w:"lettre",p:"lètr",e:"✉️",n:"P1"},
-  {w:"leur",p:"lœr",e:"👥",n:"P2"},
-  {w:"lever",p:"lvé",e:"⬆️",n:"P1"},
-  {w:"lieu",p:"lyeu",e:"📍",n:"P2"},
-  {w:"lire",p:"lir",e:"📖",n:"P1"},
-  {w:"lit",p:"li",e:"🛏️",n:"P1"},
-  {w:"livre",p:"livr",e:"📚",n:"P1"},
-  {w:"loi",p:"lwa",e:"⚖️",n:"P3"},
-  {w:"loin",p:"lwin",e:"📏",n:"P1"},
-  {w:"long",p:"lon",e:"📏",n:"P1"},
-  {w:"longtemps",p:"lontan",e:"⏳",n:"P2"},
-  {w:"lorsque",p:"lorsk",e:"⏱️",n:"P3"},
-  {w:"lui",p:"lui",e:"👨",n:"P1"},
-  // M
-  {w:"ma",p:"ma",e:"👤",n:"P1"},
-  {w:"madame",p:"madam",e:"👩",n:"P1"},
-  {w:"mademoiselle",p:"madmwazèl",e:"👧",n:"P1"},
-  {w:"main",p:"min",e:"✋",n:"P1"},
-  {w:"maintenant",p:"mintnan",e:"⏰",n:"P1"},
-  {w:"mais",p:"mè",e:"↔️",n:"P1"},
-  {w:"maison",p:"mèzon",e:"🏠",n:"P1"},
-  {w:"maître",p:"mètr",e:"👨‍🏫",n:"P2"},
-  {w:"mal",p:"mal",e:"😢",n:"P1"},
-  {w:"malade",p:"malad",e:"🤒",n:"P1"},
-  {w:"malgré",p:"malgré",e:"😤",n:"P3"},
-  {w:"malheureux",p:"malœreu",e:"😢",n:"P2"},
-  {w:"maman",p:"maman",e:"👩",n:"P1"},
-  {w:"manger",p:"manjé",e:"🍽️",n:"P1"},
-  {w:"manière",p:"manyèr",e:"🎭",n:"P3"},
-  {w:"manquer",p:"manké",e:"😞",n:"P2"},
-  {w:"marcher",p:"marshé",e:"🚶",n:"P1"},
-  {w:"matin",p:"matin",e:"🌅",n:"P1"},
-  {w:"mauvais",p:"movè",e:"👎",n:"P1"},
-  {w:"me",p:"me",e:"👤",n:"P1"},
-  {w:"meilleur",p:"mèyœr",e:"🥇",n:"P2"},
-  {w:"même",p:"mèm",e:"🔁",n:"P1"},
-  {w:"mer",p:"mèr",e:"🌊",n:"P1"},
-  {w:"mère",p:"mèr",e:"👩",n:"P1"},
-  {w:"mettre",p:"mètr",e:"📥",n:"P1"},
-  {w:"mieux",p:"myeu",e:"⬆️",n:"P1"},
-  {w:"milieu",p:"milyeu",e:"📍",n:"P2"},
-  {w:"mille",p:"miy",e:"1️⃣0️⃣0️⃣0️⃣",n:"P2"},
-  {w:"minute",p:"minut",e:"⏱️",n:"P1"},
-  {w:"moins",p:"mwin",e:"➖",n:"P1"},
-  {w:"mois",p:"mwa",e:"📅",n:"P1"},
-  {w:"moment",p:"moman",e:"⏰",n:"P2"},
-  {w:"monde",p:"mond",e:"🌍",n:"P1"},
-  {w:"monsieur",p:"msiœ",e:"👨",n:"P1"},
-  {w:"monter",p:"monté",e:"⬆️",n:"P1"},
-  {w:"montrer",p:"montré",e:"👆",n:"P1"},
-  {w:"mort",p:"mor",e:"💀",n:"P2"},
-  {w:"mot",p:"mo",e:"💬",n:"P1"},
-  {w:"mourir",p:"murir",e:"💀",n:"P2"},
-  {w:"mouvement",p:"muvman",e:"🏃",n:"P3"},
-  {w:"moyen",p:"mwayin",e:"🛠️",n:"P3"},
-  // N
-  {w:"nature",p:"natur",e:"🌿",n:"P2"},
-  {w:"ne",p:"ne",e:"🚫",n:"P1"},
-  {w:"nécessaire",p:"néséssèr",e:"⚠️",n:"P3"},
-  {w:"neuf",p:"nœf",e:"9️⃣",n:"P1"},
-  {w:"ni",p:"ni",e:"🚫",n:"P2"},
-  {w:"nid",p:"ni",e:"🐦",n:"P2"},
-  {w:"noir",p:"nwar",e:"⬛",n:"P1"},
-  {w:"nom",p:"non",e:"🏷️",n:"P1"},
-  {w:"nombreux",p:"nonbreu",e:"📊",n:"P3"},
-  {w:"non",p:"non",e:"❌",n:"P1"},
-  {w:"notre",p:"notr",e:"👥",n:"P1"},
-  {w:"nous",p:"nu",e:"👥",n:"P1"},
-  {w:"nouveau",p:"nuvo",e:"✨",n:"P1"},
-  {w:"nouvelle",p:"nuvèl",e:"📰",n:"P2"},
-  {w:"nuit",p:"nui",e:"🌙",n:"P1"},
-  // O
-  {w:"objet",p:"objè",e:"📦",n:"P2"},
-  {w:"obliger",p:"oblijé",e:"⚠️",n:"P3"},
-  {w:"occasion",p:"okasyon",e:"🎁",n:"P3"},
-  {w:"occuper",p:"okupé",e:"💼",n:"P3"},
-  {w:"œil",p:"œy",e:"👁️",n:"P1"},
-  {w:"œuvre",p:"œvr",e:"🎨",n:"P3"},
-  {w:"offrir",p:"ofrir",e:"🎁",n:"P2"},
-  {w:"oiseau",p:"wazo",e:"🐦",n:"P1"},
-  {w:"on",p:"on",e:"👤",n:"P1"},
-  {w:"oncle",p:"onkl",e:"👨",n:"P1"},
-  {w:"or",p:"or",e:"🥇",n:"P3"},
-  {w:"ordre",p:"ordr",e:"📋",n:"P3"},
-  {w:"oser",p:"ozé",e:"💪",n:"P3"},
-  {w:"ou",p:"ou",e:"↔️",n:"P1"},
-  {w:"où",p:"ou",e:"📍",n:"P1"},
-  {w:"oublier",p:"oublié",e:"😶",n:"P2"},
-  {w:"oui",p:"wi",e:"✅",n:"P1"},
-  {w:"ouvrier",p:"ouvryé",e:"👷",n:"P2"},
-  {w:"ouvrir",p:"ouvrir",e:"🚪",n:"P1"},
-  // P
-  {w:"pain",p:"pin",e:"🍞",n:"P1"},
-  {w:"papa",p:"papa",e:"👨",n:"P1"},
-  {w:"par",p:"par",e:"📍",n:"P1"},
-  {w:"paraitre",p:"parètr",e:"👀",n:"P3"},
-  {w:"parce que",p:"parsk",e:"💡",n:"P2"},
-  {w:"parent",p:"paran",e:"👨‍👩",n:"P1"},
-  {w:"parfois",p:"parfwa",e:"🔄",n:"P2"},
-  {w:"parler",p:"parlé",e:"💬",n:"P1"},
-  {w:"parmi",p:"parmi",e:"👥",n:"P3"},
-  {w:"parole",p:"parol",e:"💬",n:"P2"},
-  {w:"part",p:"par",e:"🧩",n:"P2"},
-  {w:"partie",p:"parti",e:"🧩",n:"P2"},
-  {w:"partir",p:"partir",e:"🚶",n:"P1"},
-  {w:"pas",p:"pa",e:"👣",n:"P1"},
-  {w:"passer",p:"pasé",e:"⏩",n:"P1"},
-  {w:"pauvre",p:"povr",e:"😢",n:"P2"},
-  {w:"payer",p:"payé",e:"💰",n:"P2"},
-  {w:"pays",p:"pèyi",e:"🌍",n:"P2"},
-  {w:"peine",p:"pèn",e:"😢",n:"P2"},
-  {w:"pendant",p:"pendan",e:"⏳",n:"P2"},
-  {w:"pensée",p:"pensé",e:"💭",n:"P2"},
-  {w:"penser",p:"pensé",e:"💭",n:"P1"},
-  {w:"perdre",p:"pèrdr",e:"😞",n:"P2"},
-  {w:"père",p:"pèr",e:"👨",n:"P1"},
-  {w:"permettre",p:"pèrmètr",e:"✅",n:"P3"},
-  {w:"personne",p:"pèrson",e:"👤",n:"P2"},
-  {w:"petit",p:"pti",e:"🐭",n:"P1"},
-  {w:"peu",p:"peu",e:"📊",n:"P1"},
-  {w:"peur",p:"pœr",e:"😨",n:"P1"},
-  {w:"peut-être",p:"peutètr",e:"🤔",n:"P2"},
-  {w:"pièce",p:"pyès",e:"🏠",n:"P2"},
-  {w:"pied",p:"pyé",e:"🦶",n:"P1"},
-  {w:"plaisir",p:"plèzir",e:"😊",n:"P2"},
-  {w:"plein",p:"plin",e:"🔋",n:"P2"},
-  {w:"pleurer",p:"plœré",e:"😢",n:"P1"},
-  {w:"pluie",p:"plui",e:"🌧️",n:"P1"},
-  {w:"plus",p:"plu",e:"➕",n:"P1"},
-  {w:"plusieurs",p:"pluzœr",e:"📊",n:"P2"},
-  {w:"plutôt",p:"pluto",e:"↔️",n:"P3"},
-  {w:"point",p:"pwin",e:"📍",n:"P2"},
-  {w:"porter",p:"porté",e:"🎒",n:"P2"},
-  {w:"poser",p:"pozé",e:"📥",n:"P2"},
-  {w:"possible",p:"posibl",e:"✅",n:"P2"},
-  {w:"pour",p:"pur",e:"🎯",n:"P1"},
-  {w:"pourquoi",p:"purkwa",e:"❓",n:"P1"},
-  {w:"pourtant",p:"purtan",e:"↔️",n:"P3"},
-  {w:"pousser",p:"pusé",e:"👊",n:"P2"},
-  {w:"pouvoir",p:"puvwar",e:"💪",n:"P2"},
-  {w:"prairie",p:"prèri",e:"🌾",n:"P2"},
-  {w:"premier",p:"premyé",e:"1️⃣",n:"P1"},
-  {w:"prendre",p:"prandr",e:"✋",n:"P1"},
-  {w:"préparer",p:"préparé",e:"🍳",n:"P2"},
-  {w:"près",p:"prè",e:"📏",n:"P1"},
-  {w:"présent",p:"prézan",e:"⏰",n:"P2"},
-  {w:"présenter",p:"prézanté",e:"👋",n:"P2"},
-  {w:"presque",p:"prèsk",e:"📊",n:"P2"},
-  {w:"prêt",p:"prè",e:"✅",n:"P2"},
-  {w:"prier",p:"prié",e:"🙏",n:"P2"},
-  {w:"printemps",p:"printan",e:"🌸",n:"P1"},
-  {w:"prix",p:"pri",e:"🏷️",n:"P2"},
-  {w:"produire",p:"produir",e:"🏭",n:"P3"},
-  {w:"profond",p:"profon",e:"🌊",n:"P3"},
-  {w:"promenade",p:"promnad",e:"🚶",n:"P2"},
-  {w:"promener",p:"promné",e:"🚶",n:"P1"},
-  {w:"promettre",p:"promètr",e:"🤝",n:"P3"},
-  {w:"propre",p:"propr",e:"✨",n:"P2"},
-  {w:"puis",p:"pui",e:"⏩",n:"P2"},
-  {w:"puisque",p:"puisk",e:"💡",n:"P3"},
-  // Q
-  {w:"quand",p:"kan",e:"⏰",n:"P1"},
-  {w:"quart",p:"kar",e:"¼",n:"P2"},
-  {w:"quatre",p:"katr",e:"4️⃣",n:"P1"},
-  {w:"quel",p:"kèl",e:"❓",n:"P1"},
-  {w:"quelque",p:"kèlk",e:"📊",n:"P2"},
-  {w:"question",p:"kèstyon",e:"❓",n:"P2"},
-  {w:"qui",p:"ki",e:"❓",n:"P1"},
-  {w:"quitter",p:"kité",e:"🚶",n:"P2"},
-  {w:"quoi",p:"kwa",e:"❓",n:"P1"},
-  // R
-  {w:"raconter",p:"rakonté",e:"📖",n:"P2"},
-  {w:"raison",p:"rèzon",e:"💡",n:"P2"},
-  {w:"rappeler",p:"raplé",e:"📞",n:"P2"},
-  {w:"recevoir",p:"resevwar",e:"📥",n:"P2"},
-  {w:"reconnaitre",p:"rekonètr",e:"👀",n:"P3"},
-  {w:"regarder",p:"regardé",e:"👀",n:"P1"},
-  {w:"remercier",p:"remèrsyé",e:"🙏",n:"P2"},
-  {w:"remettre",p:"remètr",e:"📥",n:"P3"},
-  {w:"remplir",p:"ranplir",e:"🔋",n:"P2"},
-  {w:"rencontrer",p:"rankonté",e:"🤝",n:"P2"},
-  {w:"rendre",p:"randr",e:"📤",n:"P2"},
-  {w:"rentrer",p:"rantré",e:"🏠",n:"P1"},
-  {w:"répondre",p:"répondr",e:"💬",n:"P2"},
-  {w:"reprendre",p:"reprandr",e:"🔁",n:"P3"},
-  {w:"rester",p:"rèsté",e:"🛑",n:"P1"},
-  {w:"retour",p:"retour",e:"🔁",n:"P2"},
-  {w:"retourner",p:"retourné",e:"🔁",n:"P2"},
-  {w:"retrouver",p:"retrouvé",e:"🔍",n:"P2"},
-  {w:"revenir",p:"revnir",e:"🔁",n:"P2"},
-  {w:"revoir",p:"revwar",e:"👋",n:"P2"},
-  {w:"rien",p:"ryin",e:"0️⃣",n:"P1"},
-  {w:"rire",p:"rir",e:"😂",n:"P1"},
-  {w:"roi",p:"rwa",e:"👑",n:"P2"},
-  {w:"rose",p:"roz",e:"🌹",n:"P1"},
-  {w:"rouge",p:"ruj",e:"🔴",n:"P1"},
-  {w:"route",p:"rut",e:"🛤️",n:"P1"},
-  {w:"rue",p:"ru",e:"🏙️",n:"P1"},
-  // S
-  {w:"sa",p:"sa",e:"👤",n:"P1"},
-  {w:"salle",p:"sal",e:"🏛️",n:"P1"},
-  {w:"sans",p:"san",e:"🚫",n:"P1"},
-  {w:"sauver",p:"sové",e:"🦸",n:"P2"},
-  {w:"savoir",p:"savwar",e:"🧠",n:"P2"},
-  {w:"se",p:"se",e:"👤",n:"P1"},
-  {w:"semaine",p:"smèn",e:"📅",n:"P1"},
-  {w:"sembler",p:"sanbléé",e:"🤔",n:"P3"},
-  {w:"sens",p:"san",e:"🧭",n:"P3"},
-  {w:"sentiment",p:"santiman",e:"❤️",n:"P3"},
-  {w:"sentir",p:"santir",e:"👃",n:"P2"},
-  {w:"sept",p:"sèt",e:"7️⃣",n:"P1"},
-  {w:"service",p:"sèrvis",e:"🛎️",n:"P3"},
-  {w:"servir",p:"sèrvir",e:"🛎️",n:"P3"},
-  {w:"seul",p:"sœl",e:"👤",n:"P1"},
-  {w:"seulement",p:"sœlman",e:"1️⃣",n:"P2"},
-  {w:"si",p:"si",e:"❓",n:"P1"},
-  {w:"silence",p:"silans",e:"🤫",n:"P2"},
-  {w:"simple",p:"sinpl",e:"⭕",n:"P2"},
-  {w:"six",p:"sis",e:"6️⃣",n:"P1"},
-  {w:"sœur",p:"sœr",e:"👧",n:"P1"},
-  {w:"soin",p:"swin",e:"💊",n:"P2"},
-  {w:"soir",p:"swar",e:"🌙",n:"P1"},
-  {w:"soldat",p:"solda",e:"🪖",n:"P2"},
-  {w:"soleil",p:"solèy",e:"☀️",n:"P1"},
-  {w:"songer",p:"sonjé",e:"💭",n:"P3"},
-  {w:"sonner",p:"soné",e:"🔔",n:"P1"},
-  {w:"sorte",p:"sort",e:"📋",n:"P3"},
-  {w:"sortir",p:"sortir",e:"🚪",n:"P1"},
-  {w:"souffrir",p:"sufrir",e:"😢",n:"P3"},
-  {w:"sourire",p:"surir",e:"😊",n:"P1"},
-  {w:"sous",p:"su",e:"⬇️",n:"P1"},
-  {w:"souvenir",p:"suvnir",e:"📸",n:"P2"},
-  {w:"souvent",p:"suvan",e:"🔄",n:"P1"},
-  {w:"suite",p:"suit
+<script>
+let typed = '';
+let recognition = null;
+let micOn = false;
+
+// Vérifie que words.js est bien chargé
+window.addEventListener('load', function() {
+  if (typeof words !== 'undefined') {
+    document.getElementById('counter').textContent = '📚 ' + words.length + ' mots disponibles';
+  } else {
+    document.getElementById('counter').textContent = '❌ Erreur : fichier words.js manquant';
+  }
+});
+
+function updateScreen() {
+  const screen = document.getElementById('screen');
+  screen.innerHTML = typed
+    ? typed.toUpperCase() + '<span class="cursor">|</span>'
+    : '<span class="cursor">|</span>';
+}
+
+function add(letter) { typed += letter; updateScreen(); }
+function delLetter() { typed = typed.slice(0, -1); updateScreen(); }
+function clearAll() {
+  typed = '';
+  updateScreen();
+  document.getElementById('resultsBox').classList.remove('visible');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Backspace') { e.preventDefault(); delLetter(); }
+  else if (e.key === 'Enter') { e.preventDefault(); searchWord(); }
+  else if (e.key.length === 1) add(e.key.toLowerCase());
+});
+
+function toggleMic() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Utilisez Chrome ou Edge pour la dictée vocale.');
+    return;
+  }
+  if (micOn) { recognition.stop(); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = 'fr-FR';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onstart = () => {
+    micOn = true;
+    document.getElementById('micBtn').classList.add('on');
+    document.getElementById('micBtn').textContent = '🔴 En écoute...';
+    document.getElementById('micStatus').textContent = '🎤 Parlez maintenant...';
+  };
+  recognition.onresult = (e) => {
+    typed = e.results[0][0].transcript.toLowerCase().trim();
+    updateScreen();
+    searchWord();
+  };
+  recognition.onerror = (e) => {
+    document.getElementById('micStatus').textContent = '❌ Erreur : ' + e.error;
+  };
+  recognition.onend = () => {
+    micOn = false;
+    document.getElementById('micBtn').classList.remove('on');
+    document.getElementById('micBtn').textContent = '🎤 Dicter';
+    document.getElementById('micStatus').textContent = '';
+  };
+  recognition.start();
+}
+
+function speak(word) {
+  const u = new SpeechSynthesisUtterance(word);
+  u.lang = 'fr-FR'; u.rate = 0.8;
+  speechSynthesis.speak(u);
+}
+
+function normalize(str) {
+  return str.toLowerCase()
+    .replace(/[àâä]/g,'a').replace(/[éèêë]/g,'e')
+    .replace(/[îï]/g,'i').replace(/[ôö]/g,'o')
+    .replace(/[ùûü]/g,'u').replace(/ç/g,'c')
+    .replace(/œ/g,'oe').replace(/æ/g,'ae');
+}
+
+function phoneticMatch(input, word, phonetic) {
+  const inp = normalize(input);
+  const wrd = normalize(word);
+  const pho = normalize(phonetic);
+  if (wrd === inp) return 100;
+  if (wrd.startsWith(inp)) return 90;
+  if (pho === inp) return 85;
+  if (pho.startsWith(inp)) return 80;
+  if (wrd.includes(inp)) return 60;
+  const phonMap = [
+    ['ph','f'],['ch','sh'],['ou','u'],['eau','o'],['au','o'],
+    ['ai','e'],['ei','e'],['oi','wa'],['gn','ny'],['qu','k'],
+    ['ss','s'],['tion','sion'],['an','an'],['en','an'],['in','in'],['ain','in']
+  ];
+  let modInp = inp;
+  phonMap.forEach(([f,t]) => { modInp = modInp.replace(new RegExp(f,'g'),t); });
+  if (pho.includes(modInp)) return 70;
+  if (wrd.includes(modInp)) return 65;
+  return 0;
+}
+
+function searchWord() {
+  if (typeof words === 'undefined') {
+    alert('❌ Le fichier words.js est manquant !');
+    return;
+  }
+  const input = typed.trim();
+  if (!input) { alert('Écris un mot d\'abord !'); return; }
+
+  const scored = words
+    .map(item => ({ ...item, score: phoneticMatch(input, item.w, item.p) }))
+    .filter(item => item.score > 0)
+    .sort((a,b) => b.score - a.score)
+    .slice(0, 40);
+
+  const box = document.getElementById('resultsBox');
+  const grid = document.getElementById('resultsGrid');
+  const title = document.getElementById('resultsTitle');
+  box.classList.add('visible');
+
+  if (scored.length === 0) {
+    title.textContent = '😕 Aucun résultat pour "' + input + '"';
+    grid.innerHTML = '<div class="no-result">Essaie une autre orthographe !</div>';
+    return;
+  }
+  title.textContent = '✅ ' + scored.length + ' résultat(s) pour "' + input + '"';
+  grid.innerHTML = scored.map(item =>
+    `<div class="card" onclick="speak('${item.w}')">
+      <span class="em">${item.e}</span>
+      <div class="wrd">${item.w}</div>
+      <span class="lvl">${item.n}</span>
+    </div>`
+  ).join('');
+  box.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
