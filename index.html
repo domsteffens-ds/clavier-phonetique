@@ -12,80 +12,140 @@ body {
   min-height: 100vh; padding: 15px;
 }
 h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
-.app { max-width: 750px; margin: 0 auto; }
+.app { max-width: 800px; margin: 0 auto; }
+
+/* SAISIE */
 .display-box {
   background: white; border-radius: 15px;
   padding: 20px; margin-bottom: 15px;
-  text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 .word-screen {
   font-size: 2.8em; font-weight: bold; color: #2c3e50;
   letter-spacing: 8px; min-height: 70px; padding: 10px;
   border-bottom: 3px solid #3498db; margin-bottom: 15px;
-  word-break: break-all;
+  word-break: break-all; text-align: center;
 }
 .cursor { animation: blink 1s infinite; color: #3498db; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 .btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .btn {
-  padding: 10px 18px; border: none; border-radius: 10px;
-  font-size: 0.95em; font-weight: bold; cursor: pointer; transition: transform 0.1s;
+  padding: 12px 18px; border: none; border-radius: 10px;
+  font-size: 1em; font-weight: bold; cursor: pointer; transition: all 0.1s;
 }
 .btn:active { transform: scale(0.95); }
-.btn-mic { background: #27ae60; color: white; }
+.btn-mic   { background: #27ae60; color: white; }
 .btn-mic.on { background: #e74c3c; animation: pulse 1s infinite; }
-.btn-del { background: #e74c3c; color: white; }
+.btn-del   { background: #e74c3c; color: white; }
 .btn-clear { background: #95a5a6; color: white; }
-.btn-search { background: #3498db; color: white; }
+.btn-add   { background: #f39c12; color: white; }
 @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-.mic-status { text-align: center; color: #e74c3c; font-size: 0.85em; margin-top: 5px; min-height: 20px; }
-.keyboard { background: #2c3e50; border-radius: 15px; padding: 12px; margin-bottom: 15px; }
-.row { display: flex; justify-content: center; gap: 5px; margin-bottom: 5px; }
-.k {
-  width: 55px; height: 52px; background: white; border: none;
-  border-radius: 7px; font-size: 1.1em; font-weight: bold; color: #2c3e50;
-  cursor: pointer; box-shadow: 0 3px 0 #aaa; transition: all 0.1s;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+.mic-status { text-align: center; color: #e74c3c; font-size: 0.85em; margin-top: 8px; min-height: 20px; }
+
+/* SUGGESTIONS EN TEMPS RÉEL */
+.suggestions-box {
+  background: white; border-radius: 15px;
+  padding: 15px; margin-bottom: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  min-height: 100px;
 }
-.k:hover { background: #3498db; color: white; }
-.k:active { transform: translateY(2px); box-shadow: 0 1px 0 #aaa; }
-.k.accent { background: #ffeaa7; }
-.k.accent:hover { background: #fdcb6e; }
-.k.wide { width: 80px; }
-.k.space { width: 260px; font-size: 0.8em; color: #888; background: #ecf0f1; }
-.results-box {
-  background: white; border-radius: 15px; padding: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: none;
+.suggestions-titre {
+  text-align: center; font-weight: bold; color: #7f8c8d;
+  font-size: 0.9em; margin-bottom: 10px;
 }
-.results-box.visible { display: block; }
-.results-title { text-align: center; font-weight: bold; color: #2c3e50; margin-bottom: 12px; }
-.results-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.suggestions-grid {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+}
 .card {
-  background: #f8f9fa; border-radius: 10px; padding: 10px 15px;
-  cursor: pointer; border: 2px solid transparent; text-align: center; transition: all 0.2s;
+  background: #f8f9fa; border-radius: 12px; padding: 12px 16px;
+  cursor: pointer; border: 2px solid transparent;
+  text-align: center; transition: all 0.2s; min-width: 90px;
 }
-.card:hover { border-color: #3498db; transform: translateY(-2px); }
-.card .em { font-size: 1.8em; display: block; }
-.card .wrd { font-weight: bold; color: #2c3e50; font-size: 0.95em; }
-.card .lvl { font-size: 0.7em; background: #3498db; color: white; border-radius: 8px; padding: 1px 5px; display: inline-block; margin-top: 2px; }
-.no-result { text-align: center; color: #e74c3c; padding: 15px; width: 100%; }
-.counter { text-align: center; color: white; font-size: 0.85em; padding: 8px; }
+.card:hover { border-color: #3498db; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+.card:active { transform: scale(0.95); }
+.card .em  { font-size: 2em; display: block; }
+.card .wrd { font-weight: bold; color: #2c3e50; font-size: 1em; margin-top: 4px; }
+.card .lvl { font-size: 0.7em; background: #3498db; color: white; border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 3px; }
+.no-result { text-align: center; color: #bdc3c7; padding: 20px; font-style: italic; }
+
+/* CLAVIER */
+.keyboard {
+  background: #2c3e50; border-radius: 15px;
+  padding: 15px; margin-bottom: 15px;
+}
+.row { display: flex; justify-content: center; gap: 6px; margin-bottom: 6px; }
+.k {
+  height: 60px; width: 66px;
+  background: white; border: none; border-radius: 8px;
+  font-size: 1.3em; font-weight: bold; color: #2c3e50;
+  cursor: pointer; box-shadow: 0 4px 0 #aaa; transition: all 0.1s;
+  display: flex; align-items: center; justify-content: center;
+}
+.k:hover  { background: #3498db; color: white; box-shadow: 0 4px 0 #2178a8; }
+.k:active { transform: translateY(3px); box-shadow: 0 1px 0 #aaa; }
+.k.accent { background: #ffeaa7; font-size: 1.1em; }
+.k.accent:hover { background: #fdcb6e; color: #2c3e50; }
+.k.wide   { width: 100px; font-size: 1em; }
+.k.space  { width: 280px; font-size: 0.85em; color: #888; background: #ecf0f1; }
+.counter  { text-align: center; color: rgba(255,255,255,0.8); font-size: 0.85em; padding: 5px; }
+
+/* MODAL AJOUTER MOT */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); z-index: 999;
+  align-items: center; justify-content: center;
+}
+.modal-bg.open { display: flex; }
+.modal-box {
+  background: white; border-radius: 20px;
+  padding: 30px; width: 90%; max-width: 380px; text-align: center;
+}
+.modal-box h2 { margin-bottom: 20px; color: #2c3e50; }
+.champ {
+  width: 100%; padding: 12px; margin-bottom: 12px;
+  border: 2px solid #ddd; border-radius: 10px;
+  font-size: 1em; outline: none;
+}
+.champ:focus { border-color: #3498db; }
+.modal-box .btn { width: 100%; margin-bottom: 8px; padding: 14px; font-size: 1em; }
+.btn-valider { background: #27ae60; color: white; }
+.btn-annuler { background: #ecf0f1; color: #555; }
+
+/* MODAL VOIR MOT */
+.modal-mot-box {
+  background: white; border-radius: 20px;
+  padding: 30px; width: 90%; max-width: 320px; text-align: center;
+}
+.grand-emoji { font-size: 5em; }
+.grand-mot   { font-size: 2.5em; font-weight: bold; color: #2c3e50; margin: 10px 0; }
+.grand-phon  { color: #7f8c8d; margin-bottom: 20px; font-size: 1.1em; }
+.btn-ecouter { background: #3498db; color: white; }
+.btn-fermer  { background: #ecf0f1; color: #555; }
 </style>
 </head>
 <body>
 <div class="app">
   <h1>🔤 Clavier Phonétique Français</h1>
+
+  <!-- ZONE DE SAISIE -->
   <div class="display-box">
     <div class="word-screen" id="screen"><span class="cursor">|</span></div>
     <div class="mic-status" id="micStatus"></div>
     <div class="btns">
-      <button class="btn btn-mic" id="micBtn" onclick="toggleMic()">🎤 Dicter</button>
-      <button class="btn btn-del" onclick="delLetter()">⌫ Effacer</button>
-      <button class="btn btn-clear" onclick="clearAll()">🗑️ Tout effacer</button>
-      <button class="btn btn-search" onclick="searchWord()">🔍 Chercher</button>
+      <button class="btn btn-mic"   id="micBtn"  onclick="toggleMic()">🎤 Dicter</button>
+      <button class="btn btn-del"                onclick="delLetter()">⌫ Effacer</button>
+      <button class="btn btn-clear"              onclick="clearAll()">🗑️ Tout effacer</button>
+      <button class="btn btn-add"                onclick="ouvrirAjout()">➕ Ajouter un mot</button>
     </div>
   </div>
 
+  <!-- SUGGESTIONS EN TEMPS RÉEL -->
+  <div class="suggestions-box">
+    <div class="suggestions-titre" id="sugTitre">💡 Commence à taper pour voir les suggestions...</div>
+    <div class="suggestions-grid"  id="sugGrid"></div>
+  </div>
+
+  <!-- CLAVIER AZERTY -->
   <div class="keyboard">
     <div class="row">
       <button class="k" onclick="add('a')">A</button>
@@ -112,13 +172,14 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
       <button class="k" onclick="add('m')">M</button>
     </div>
     <div class="row">
+      <button class="k wide" onclick="delLetter()">⌫ Eff.</button>
       <button class="k" onclick="add('w')">W</button>
       <button class="k" onclick="add('x')">X</button>
       <button class="k" onclick="add('c')">C</button>
       <button class="k" onclick="add('v')">V</button>
       <button class="k" onclick="add('b')">B</button>
       <button class="k" onclick="add('n')">N</button>
-      <button class="k wide" onclick="delLetter()">⌫</button>
+      <button class="k wide" onclick="clearAll()">🗑️ Tout</button>
     </div>
     <div class="row">
       <button class="k accent" onclick="add('é')">É</button>
@@ -137,154 +198,414 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
     </div>
   </div>
 
-  <div class="results-box" id="resultsBox">
-    <div class="results-title" id="resultsTitle"></div>
-    <div class="results-grid" id="resultsGrid"></div>
-  </div>
-  <div class="counter" id="counter">⏳ Chargement des mots...</div>
+  <div class="counter" id="counter">⏳ Chargement...</div>
 </div>
 
-<!-- Le fichier words.js sera chargé ici -->
-<script src="words.js"></script>
+<!-- MODAL VOIR UN MOT -->
+<div class="modal-bg" id="modalMot">
+  <div class="modal-mot-box">
+    <div class="grand-emoji" id="mE"></div>
+    <div class="grand-mot"   id="mM"></div>
+    <div class="grand-phon"  id="mP"></div>
+    <div style="display:flex; gap:10px; flex-direction:column">
+      <button class="btn btn-ecouter" onclick="ecouter()">🔊 Écouter le mot</button>
+      <button class="btn btn-fermer"  onclick="fermerMot()">✕ Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AJOUTER UN MOT -->
+<div class="modal-bg" id="modalAjout">
+  <div class="modal-box">
+    <h2>➕ Ajouter un mot</h2>
+    <input class="champ" id="aMot"   placeholder="Mot à ajouter (ex: papillon)" />
+    <input class="champ" id="aPhon"  placeholder="Comment ça sonne ? (ex: papion)" />
+    <input class="champ" id="aEmoji" placeholder="Emoji (ex: 🦋)" />
+    <button class="btn btn-valider" onclick="validerAjout()">✅ Ajouter à ma liste</button>
+    <button class="btn btn-annuler" onclick="fermerAjout()">Annuler</button>
+  </div>
+</div>
 
 <script>
-let typed = '';
-let recognition = null;
-let micOn = false;
+// ════════════════════════════════════════════════
+// BANQUE DE MOTS INTÉGRÉE (+ words.js si présent)
+// ════════════════════════════════════════════════
+var banque = [
+  {w:'maison',     p:'mézon',      e:'🏠', n:'P1'},
+  {w:'chien',      p:'chiin',      e:'🐶', n:'P1'},
+  {w:'chat',       p:'cha',        e:'🐱', n:'P1'},
+  {w:'pantalon',   p:'pantalon',   e:'👖', n:'P1'},
+  {w:'bateau',     p:'bato',       e:'⛵', n:'P1'},
+  {w:'papillon',   p:'papion',     e:'🦋', n:'P2'},
+  {w:'soleil',     p:'soley',      e:'☀️', n:'P1'},
+  {w:'voiture',    p:'voitire',    e:'🚗', n:'P1'},
+  {w:'éléphant',   p:'elefan',     e:'🐘', n:'P2'},
+  {w:'chocolat',   p:'chokola',    e:'🍫', n:'P1'},
+  {w:'girafe',     p:'jiraf',      e:'🦒', n:'P2'},
+  {w:'orange',     p:'oranje',     e:'🍊', n:'P1'},
+  {w:'pomme',      p:'pom',        e:'🍎', n:'P1'},
+  {w:'école',      p:'ekol',       e:'🏫', n:'P1'},
+  {w:'livre',      p:'livr',       e:'📚', n:'P1'},
+  {w:'ami',        p:'ami',        e:'👫', n:'P1'},
+  {w:'famille',    p:'famiy',      e:'👨‍👩‍👧', n:'P1'},
+  {w:'fleur',      p:'fleur',      e:'🌸', n:'P1'},
+  {w:'arbre',      p:'arbr',       e:'🌳', n:'P1'},
+  {w:'oiseau',     p:'wazo',       e:'🐦', n:'P1'},
+  {w:'vache',      p:'vach',       e:'🐄', n:'P1'},
+  {w:'cochon',     p:'kochon',     e:'🐷', n:'P1'},
+  {w:'mouton',     p:'mouton',     e:'🐑', n:'P1'},
+  {w:'cheval',     p:'cheval',     e:'🐴', n:'P1'},
+  {w:'lapin',      p:'lapin',      e:'🐰', n:'P1'},
+  {w:'grenouille', p:'grenouiy',   e:'🐸', n:'P2'},
+  {w:'tortue',     p:'tortu',      e:'🐢', n:'P1'},
+  {w:'poisson',    p:'poisson',    e:'🐟', n:'P1'},
+  {w:'requin',     p:'rekin',      e:'🦈', n:'P2'},
+  {w:'baleine',    p:'balin',      e:'🐋', n:'P2'},
+  {w:'montagne',   p:'montany',    e:'⛰️', n:'P2'},
+  {w:'rivière',    p:'rivière',    e:'🏞️', n:'P2'},
+  {w:'forêt',      p:'forè',       e:'🌲', n:'P1'},
+  {w:'plage',      p:'plaj',       e:'🏖️', n:'P1'},
+  {w:'nuage',      p:'nuaj',       e:'☁️', n:'P1'},
+  {w:'pluie',      p:'plui',       e:'🌧️', n:'P1'},
+  {w:'neige',      p:'nej',        e:'❄️', n:'P1'},
+  {w:'vent',       p:'van',        e:'💨', n:'P1'},
+  {w:'feu',        p:'feu',        e:'🔥', n:'P1'},
+  {w:'eau',        p:'o',          e:'💧', n:'P1'},
+  {w:'pain',       p:'pin',        e:'🍞', n:'P1'},
+  {w:'fromage',    p:'fromaj',     e:'🧀', n:'P1'},
+  {w:'beurre',     p:'beur',       e:'🧈', n:'P1'},
+  {w:'lait',       p:'lé',         e:'🥛', n:'P1'},
+  {w:'oeuf',       p:'euf',        e:'🥚', n:'P1'},
+  {w:'sucre',      p:'sukr',       e:'🍬', n:'P1'},
+  {w:'gâteau',     p:'gato',       e:'🎂', n:'P1'},
+  {w:'bonbon',     p:'bonbon',     e:'🍭', n:'P1'},
+  {w:'glace',      p:'glas',       e:'🍦', n:'P1'},
+  {w:'pizza',      p:'pidza',      e:'🍕', n:'P1'},
+  {w:'soupe',      p:'soup',       e:'🍲', n:'P1'},
+  {w:'salade',     p:'salad',      e:'🥗', n:'P1'},
+  {w:'tomate',     p:'tomat',      e:'🍅', n:'P1'},
+  {w:'carotte',    p:'karot',      e:'🥕', n:'P1'},
+  {w:'haricot',    p:'ariko',      e:'🫘', n:'P2'},
+  {w:'chambre',    p:'chambr',     e:'🛏️', n:'P1'},
+  {w:'cuisine',    p:'kuizin',     e:'🍳', n:'P1'},
+  {w:'jardin',     p:'jardin',     e:'🌻', n:'P1'},
+  {w:'fenêtre',    p:'fenetr',     e:'🪟', n:'P1'},
+  {w:'porte',      p:'port',       e:'🚪', n:'P1'},
+  {w:'table',      p:'tabl',       e:'🪑', n:'P1'},
+  {w:'chaise',     p:'chez',       e:'🪑', n:'P1'},
+  {w:'vélo',       p:'velo',       e:'🚲', n:'P1'},
+  {w:'avion',      p:'avion',      e:'✈️', n:'P1'},
+  {w:'train',      p:'trin',       e:'🚂', n:'P1'},
+  {w:'bus',        p:'bus',        e:'🚌', n:'P1'},
+  {w:'camion',     p:'kamion',     e:'🚛', n:'P1'},
+  {w:'moto',       p:'moto',       e:'🏍️', n:'P1'},
+  {w:'fusée',      p:'fuzé',       e:'🚀', n:'P2'},
+  {w:'rouge',      p:'rouj',       e:'🔴', n:'P1'},
+  {w:'bleu',       p:'bleu',       e:'🔵', n:'P1'},
+  {w:'vert',       p:'ver',        e:'🟢', n:'P1'},
+  {w:'jaune',      p:'jon',        e:'🟡', n:'P1'},
+  {w:'noir',       p:'nwar',       e:'⚫', n:'P1'},
+  {w:'blanc',      p:'blan',       e:'⚪', n:'P1'},
+  {w:'rose',       p:'roz',        e:'🌸', n:'P1'},
+  {w:'violet',     p:'violet',     e:'🟣', n:'P1'},
+  {w:'orange',     p:'oranj',      e:'🟠', n:'P1'},
+  {w:'professeur', p:'profeseur',  e:'👨‍🏫', n:'P2'},
+  {w:'directeur',  p:'direkteur',  e:'🏢', n:'P2'},
+  {w:'médecin',    p:'medesin',    e:'👨‍⚕️', n:'P2'},
+  {w:'pompier',    p:'pompié',     e:'🚒', n:'P1'},
+  {w:'policier',   p:'polisié',    e:'👮', n:'P2'},
+  {w:'boulanger',  p:'boulanji',   e:'🥖', n:'P2'},
+  {w:'printemps',  p:'printan',    e:'🌷', n:'P2'},
+  {w:'automne',    p:'oton',       e:'🍂', n:'P2'},
+  {w:'hiver',      p:'iver',       e:'⛄', n:'P1'},
+  {w:'été',        p:'eté',        e:'🌞', n:'P1'},
+  {w:'lundi',      p:'lundi',      e:'📅', n:'P1'},
+  {w:'mardi',      p:'mardi',      e:'📅', n:'P1'},
+  {w:'mercredi',   p:'merkredi',   e:'📅', n:'P1'},
+  {w:'jeudi',      p:'jeudi',      e:'📅', n:'P1'},
+  {w:'vendredi',   p:'vandredi',   e:'📅', n:'P1'},
+  {w:'samedi',     p:'samedi',     e:'📅', n:'P1'},
+  {w:'dimanche',   p:'dimanch',    e:'📅', n:'P1'},
+];
 
-// Vérifie que words.js est bien chargé
-window.addEventListener('load', function() {
-  if (typeof words !== 'undefined') {
-    document.getElementById('counter').textContent = '📚 ' + words.length + ' mots disponibles';
+// Fusionner avec words.js si disponible
+try {
+  if (typeof words !== 'undefined' && Array.isArray(words)) {
+    words.forEach(function(m) {
+      var existe = banque.some(function(b) {
+        return b.w.toLowerCase() === m.w.toLowerCase();
+      });
+      if (!existe) banque.push(m);
+    });
+    document.getElementById('counter').textContent =
+      '📚 ' + banque.length + ' mots disponibles (words.js chargé ✅)';
   } else {
-    document.getElementById('counter').textContent = '❌ Erreur : fichier words.js manquant';
+    document.getElementById('counter').textContent =
+      '📚 ' + banque.length + ' mots disponibles';
   }
-});
+} catch(e) {
+  document.getElementById('counter').textContent =
+    '📚 ' + banque.length + ' mots disponibles';
+}
 
+// Charger mots ajoutés par l'élève
+try {
+  var extras = JSON.parse(localStorage.getItem('mots_extra') || '[]');
+  extras.forEach(function(m) { banque.push(m); });
+} catch(e) {}
+
+// ════════════════════════════════════════════════
+// ÉTAT
+// ════════════════════════════════════════════════
+var typed = '';
+var motActuel = '';
+var micOn = false;
+var recog = null;
+
+// ════════════════════════════════════════════════
+// ÉCRAN
+// ════════════════════════════════════════════════
 function updateScreen() {
-  const screen = document.getElementById('screen');
-  screen.innerHTML = typed
+  var s = document.getElementById('screen');
+  s.innerHTML = typed
     ? typed.toUpperCase() + '<span class="cursor">|</span>'
     : '<span class="cursor">|</span>';
 }
 
-function add(letter) { typed += letter; updateScreen(); }
-function delLetter() { typed = typed.slice(0, -1); updateScreen(); }
+// ════════════════════════════════════════════════
+// CLAVIER
+// ════════════════════════════════════════════════
+function add(l) {
+  typed += l;
+  updateScreen();
+  predire();
+}
+
+function delLetter() {
+  typed = typed.slice(0, -1);
+  updateScreen();
+  predire();
+}
+
 function clearAll() {
   typed = '';
   updateScreen();
-  document.getElementById('resultsBox').classList.remove('visible');
+  predire();
 }
 
+// Clavier physique
 document.addEventListener('keydown', function(e) {
+  if (document.querySelector('.modal-bg.open')) return;
   if (e.key === 'Backspace') { e.preventDefault(); delLetter(); }
-  else if (e.key === 'Enter') { e.preventDefault(); searchWord(); }
-  else if (e.key.length === 1) add(e.key.toLowerCase());
+  else if (e.key === 'Escape') { clearAll(); }
+  else if (/^[a-zA-ZàâäéèêëîïôùûüçÀÂÄÉÈÊËÎÏÔÙÛÜÇ ]$/.test(e.key)) {
+    add(e.key.toLowerCase());
+  }
 });
 
-function toggleMic() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('Utilisez Chrome ou Edge pour la dictée vocale.');
+// ════════════════════════════════════════════════
+// PHONÉTIQUE
+// ════════════════════════════════════════════════
+function norm(t) {
+  if (!t) return '';
+  return t.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/ph/g,'f')
+    .replace(/eau|au/g,'o')
+    .replace(/ou/g,'u')
+    .replace(/ch/g,'j')
+    .replace(/ain|ein|in|im/g,'in')
+    .replace(/an|en|am|em/g,'an')
+    .replace(/on|om/g,'on')
+    .replace(/gn/g,'ny')
+    .replace(/qu/g,'k')
+    .replace(/[szxtd]$/g,'');
+}
+
+function scorer(saisie, mot) {
+  var s  = norm(saisie);
+  var mw = norm(mot.w || '');
+  var mp = norm(mot.p || '');
+
+  if (mw === s)          return 100;
+  if (mw.startsWith(s))  return 90;
+  if (mp === s)          return 85;
+  if (mp.startsWith(s))  return 80;
+  if (mw.includes(s))    return 50;
+  if (mp.includes(s))    return 45;
+
+  // Correspondance partielle lettre par lettre
+  var c = 0;
+  for (var i = 0; i < Math.min(s.length, mw.length); i++) {
+    if (s[i] === mw[i]) c++; else break;
+  }
+  if (c >= 2) return 20 + (c / s.length) * 30;
+  return 0;
+}
+
+// ════════════════════════════════════════════════
+// PRÉDICTION EN TEMPS RÉEL
+// ════════════════════════════════════════════════
+function predire() {
+  var titre = document.getElementById('sugTitre');
+  var grid  = document.getElementById('sugGrid');
+
+  if (!typed.trim()) {
+    titre.textContent = '💡 Commence à taper pour voir les suggestions...';
+    grid.innerHTML = '';
     return;
   }
-  if (micOn) { recognition.stop(); return; }
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.lang = 'fr-FR';
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.onstart = () => {
+
+  var res = [];
+  for (var i = 0; i < banque.length; i++) {
+    var sc = scorer(typed.trim(), banque[i]);
+    if (sc > 0) res.push({ m: banque[i], sc: sc });
+  }
+  res.sort(function(a,b){ return b.sc - a.sc; });
+  res = res.slice(0, 24);
+
+  if (res.length === 0) {
+    titre.textContent = '😕 Aucun mot trouvé pour "' + typed + '"';
+    grid.innerHTML = '<div class="no-result">Essaie autrement ou utilise ➕ pour ajouter ce mot !</div>';
+    return;
+  }
+
+  titre.textContent = '✅ ' + res.length + ' suggestion(s) pour "' + typed + '"';
+
+  var html = '';
+  for (var j = 0; j < res.length; j++) {
+    var m = res[j].m;
+    html += '<div class="card" onclick="voirMot(' +
+      JSON.stringify(m.w) + ',' +
+      JSON.stringify(m.e || '📖') + ',' +
+      JSON.stringify(m.p || '') + ')">' +
+      '<span class="em">' + (m.e || '📖') + '</span>' +
+      '<div class="wrd">' + m.w + '</div>' +
+      '<span class="lvl">' + (m.n || 'P1') + '</span>' +
+      '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════
+// MODAL VOIR MOT
+// ════════════════════════════════════════════════
+function voirMot(mot, emoji, phon) {
+  motActuel = mot;
+  document.getElementById('mE').textContent = emoji;
+  document.getElementById('mM').textContent = mot;
+  document.getElementById('mP').textContent = phon ? '[ ' + phon + ' ]' : '';
+  document.getElementById('modalMot').classList.add('open');
+  setTimeout(ecouter, 400);
+}
+
+function fermerMot() {
+  document.getElementById('modalMot').classList.remove('open');
+  speechSynthesis.cancel();
+}
+
+function ecouter() {
+  if (!motActuel) return;
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(motActuel);
+  u.lang = 'fr-FR'; u.rate = 0.8;
+  speechSynthesis.speak(u);
+}
+
+document.getElementById('modalMot').addEventListener('click', function(e) {
+  if (e.target === this) fermerMot();
+});
+
+// ════════════════════════════════════════════════
+// MICRO
+// ════════════════════════════════════════════════
+function toggleMic() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    alert('Dictée vocale disponible uniquement sur Chrome ou Edge.');
+    return;
+  }
+  if (micOn) { recog && recog.stop(); return; }
+
+  recog = new SR();
+  recog.lang = 'fr-FR';
+  recog.continuous = false;
+  recog.interimResults = false;
+
+  recog.onstart = function() {
     micOn = true;
     document.getElementById('micBtn').classList.add('on');
     document.getElementById('micBtn').textContent = '🔴 En écoute...';
     document.getElementById('micStatus').textContent = '🎤 Parlez maintenant...';
   };
-  recognition.onresult = (e) => {
-    typed = e.results[0][0].transcript.toLowerCase().trim();
+
+  recog.onresult = function(e) {
+    typed = e.results[0][0].transcript.toLowerCase().replace(/\s+/g,'');
     updateScreen();
-    searchWord();
+    predire();
   };
-  recognition.onerror = (e) => {
+
+  recog.onerror = function(e) {
     document.getElementById('micStatus').textContent = '❌ Erreur : ' + e.error;
   };
-  recognition.onend = () => {
+
+  recog.onend = function() {
     micOn = false;
     document.getElementById('micBtn').classList.remove('on');
     document.getElementById('micBtn').textContent = '🎤 Dicter';
     document.getElementById('micStatus').textContent = '';
   };
-  recognition.start();
+
+  recog.start();
 }
 
-function speak(word) {
-  const u = new SpeechSynthesisUtterance(word);
-  u.lang = 'fr-FR'; u.rate = 0.8;
-  speechSynthesis.speak(u);
+// ════════════════════════════════════════════════
+// AJOUTER UN MOT
+// ════════════════════════════════════════════════
+function ouvrirAjout() {
+  document.getElementById('aMot').value   = typed;
+  document.getElementById('aPhon').value  = '';
+  document.getElementById('aEmoji').value = '';
+  document.getElementById('modalAjout').classList.add('open');
 }
 
-function normalize(str) {
-  return str.toLowerCase()
-    .replace(/[àâä]/g,'a').replace(/[éèêë]/g,'e')
-    .replace(/[îï]/g,'i').replace(/[ôö]/g,'o')
-    .replace(/[ùûü]/g,'u').replace(/ç/g,'c')
-    .replace(/œ/g,'oe').replace(/æ/g,'ae');
+function fermerAjout() {
+  document.getElementById('modalAjout').classList.remove('open');
 }
 
-function phoneticMatch(input, word, phonetic) {
-  const inp = normalize(input);
-  const wrd = normalize(word);
-  const pho = normalize(phonetic);
-  if (wrd === inp) return 100;
-  if (wrd.startsWith(inp)) return 90;
-  if (pho === inp) return 85;
-  if (pho.startsWith(inp)) return 80;
-  if (wrd.includes(inp)) return 60;
-  const phonMap = [
-    ['ph','f'],['ch','sh'],['ou','u'],['eau','o'],['au','o'],
-    ['ai','e'],['ei','e'],['oi','wa'],['gn','ny'],['qu','k'],
-    ['ss','s'],['tion','sion'],['an','an'],['en','an'],['in','in'],['ain','in']
-  ];
-  let modInp = inp;
-  phonMap.forEach(([f,t]) => { modInp = modInp.replace(new RegExp(f,'g'),t); });
-  if (pho.includes(modInp)) return 70;
-  if (wrd.includes(modInp)) return 65;
-  return 0;
+document.getElementById('modalAjout').addEventListener('click', function(e) {
+  if (e.target === this) fermerAjout();
+});
+
+function validerAjout() {
+  var mot = document.getElementById('aMot').value.trim();
+  if (!mot) { alert('Entre un mot !'); return; }
+
+  var nouveau = {
+    w: mot,
+    p: document.getElementById('aPhon').value.trim(),
+    e: document.getElementById('aEmoji').value.trim() || '📖',
+    n: 'perso'
+  };
+
+  banque.push(nouveau);
+
+  try {
+    var extras = JSON.parse(localStorage.getItem('mots_extra') || '[]');
+    extras.push(nouveau);
+    localStorage.setItem('mots_extra', JSON.stringify(extras));
+  } catch(e) {}
+
+  fermerAjout();
+  predire();
+  document.getElementById('counter').textContent =
+    '📚 ' + banque.length + ' mots disponibles';
+  alert('✅ "' + mot + '" ajouté à votre liste !');
 }
 
-function searchWord() {
-  if (typeof words === 'undefined') {
-    alert('❌ Le fichier words.js est manquant !');
-    return;
-  }
-  const input = typed.trim();
-  if (!input) { alert('Écris un mot d\'abord !'); return; }
-
-  const scored = words
-    .map(item => ({ ...item, score: phoneticMatch(input, item.w, item.p) }))
-    .filter(item => item.score > 0)
-    .sort((a,b) => b.score - a.score)
-    .slice(0, 40);
-
-  const box = document.getElementById('resultsBox');
-  const grid = document.getElementById('resultsGrid');
-  const title = document.getElementById('resultsTitle');
-  box.classList.add('visible');
-
-  if (scored.length === 0) {
-    title.textContent = '😕 Aucun résultat pour "' + input + '"';
-    grid.innerHTML = '<div class="no-result">Essaie une autre orthographe !</div>';
-    return;
-  }
-  title.textContent = '✅ ' + scored.length + ' résultat(s) pour "' + input + '"';
-  grid.innerHTML = scored.map(item =>
-    `<div class="card" onclick="speak('${item.w}')">
-      <span class="em">${item.e}</span>
-      <div class="wrd">${item.w}</div>
-      <span class="lvl">${item.n}</span>
-    </div>`
-  ).join('');
-  box.scrollIntoView({ behavior: 'smooth' });
-}
+// INIT
+updateScreen();
+predire();
 </script>
 </body>
 </html>
