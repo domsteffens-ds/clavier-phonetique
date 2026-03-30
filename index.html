@@ -3,625 +3,288 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎹 Clavier Phonétique</title>
-<script src="words.js"></script>
+<title>Clavier Phonétique Français</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-  min-height: 100vh;
-  padding: 15px;
-  color: white;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh; padding: 15px;
 }
-
-h1 {
-  text-align: center;
-  font-size: 1.6em;
-  margin-bottom: 15px;
-  letter-spacing: 2px;
+h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
+.app { max-width: 750px; margin: 0 auto; }
+.display-box {
+  background: white; border-radius: 15px;
+  padding: 20px; margin-bottom: 15px;
+  text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
-
-/* ── BARRE DE SAISIE ── */
-.saisie-box {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 15px 20px;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 2px solid rgba(255,255,255,0.2);
+.word-screen {
+  font-size: 2.8em; font-weight: bold; color: #2c3e50;
+  letter-spacing: 8px; min-height: 70px; padding: 10px;
+  border-bottom: 3px solid #3498db; margin-bottom: 15px;
+  word-break: break-all;
 }
-
-#affichage {
-  flex: 1;
-  font-size: 2em;
-  letter-spacing: 4px;
-  min-height: 45px;
-  color: white;
+.cursor { animation: blink 1s infinite; color: #3498db; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  padding: 10px 18px; border: none; border-radius: 10px;
+  font-size: 0.95em; font-weight: bold; cursor: pointer; transition: transform 0.1s;
 }
-
-#affichage.vide::before {
-  content: 'tape un mot...';
-  color: rgba(255,255,255,0.3);
-  font-size: 0.5em;
-  letter-spacing: 1px;
+.btn:active { transform: scale(0.95); }
+.btn-mic { background: #27ae60; color: white; }
+.btn-mic.on { background: #e74c3c; animation: pulse 1s infinite; }
+.btn-del { background: #e74c3c; color: white; }
+.btn-clear { background: #95a5a6; color: white; }
+.btn-search { background: #3498db; color: white; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+.mic-status { text-align: center; color: #e74c3c; font-size: 0.85em; margin-top: 5px; min-height: 20px; }
+.keyboard { background: #2c3e50; border-radius: 15px; padding: 12px; margin-bottom: 15px; }
+.row { display: flex; justify-content: center; gap: 5px; margin-bottom: 5px; }
+.k {
+  width: 55px; height: 52px; background: white; border: none;
+  border-radius: 7px; font-size: 1.1em; font-weight: bold; color: #2c3e50;
+  cursor: pointer; box-shadow: 0 3px 0 #aaa; transition: all 0.1s;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
-
-.btn-rond {
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 1.3em;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.k:hover { background: #3498db; color: white; }
+.k:active { transform: translateY(2px); box-shadow: 0 1px 0 #aaa; }
+.k.accent { background: #ffeaa7; }
+.k.accent:hover { background: #fdcb6e; }
+.k.wide { width: 80px; }
+.k.space { width: 260px; font-size: 0.8em; color: #888; background: #ecf0f1; }
+.results-box {
+  background: white; border-radius: 15px; padding: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: none;
 }
-
-.btn-mic { background: #e74c3c; color: white; }
-.btn-mic.active { animation: pulse 0.8s infinite; }
-.btn-clear { background: #7f8c8d; color: white; }
-.btn-back { background: #e67e22; color: white; }
-
-@keyframes pulse {
-  0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(231,76,60,0.7); }
-  50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(231,76,60,0); }
+.results-box.visible { display: block; }
+.results-title { text-align: center; font-weight: bold; color: #2c3e50; margin-bottom: 12px; }
+.results-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.card {
+  background: #f8f9fa; border-radius: 10px; padding: 10px 15px;
+  cursor: pointer; border: 2px solid transparent; text-align: center; transition: all 0.2s;
 }
-
-/* ── SUGGESTIONS ── */
-.suggestions-titre {
-  font-size: 0.85em;
-  color: rgba(255,255,255,0.5);
-  margin-bottom: 8px;
-  padding-left: 5px;
-}
-
-.suggestions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
-  min-height: 60px;
-}
-
-.carte {
-  background: rgba(255,255,255,0.95);
-  border-radius: 15px;
-  padding: 12px 8px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 3px solid transparent;
-  animation: fadeIn 0.3s ease;
-}
-
-.carte:hover {
-  transform: translateY(-3px);
-  border-color: #3498db;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-.carte .emoji { font-size: 2em; display: block; }
-.carte .mot { font-size: 1em; font-weight: bold; color: #2c3e50; margin-top: 5px; }
-.carte .phonetique { font-size: 0.7em; color: #7f8c8d; }
-.carte .niveau { font-size: 0.65em; color: #95a5a6; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.aucun {
-  text-align: center;
-  color: rgba(255,255,255,0.4);
-  padding: 20px;
-  grid-column: 1/-1;
-  font-style: italic;
-}
-
-/* ── CLAVIER VIRTUEL ── */
-.clavier {
-  background: rgba(0,0,0,0.3);
-  border-radius: 20px;
-  padding: 12px;
-  margin-bottom: 15px;
-}
-
-.rangee {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-bottom: 5px;
-  flex-wrap: wrap;
-}
-
-.touche {
-  background: rgba(255,255,255,0.15);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  width: 42px;
-  height: 42px;
-  font-size: 1.1em;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.15s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.touche:hover, .touche:active {
-  background: rgba(255,255,255,0.4);
-  transform: scale(0.95);
-}
-
-.touche.speciale {
-  width: auto;
-  padding: 0 15px;
-  background: rgba(255,255,255,0.08);
-  font-size: 0.85em;
-}
-
-/* ── BOUTON AJOUTER ── */
-.btn-ajouter {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
-  color: white;
-  border: none;
-  border-radius: 15px;
-  font-size: 1.1em;
-  cursor: pointer;
-  margin-bottom: 15px;
-  transition: all 0.2s;
-}
-.btn-ajouter:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(46,204,113,0.4); }
-
-/* ── MODAL MOT ── */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-}
-.modal-overlay.open { display: flex; }
-
-.modal {
-  background: white;
-  border-radius: 25px;
-  padding: 40px 30px;
-  text-align: center;
-  max-width: 320px;
-  width: 90%;
-  animation: popIn 0.3s ease;
-}
-
-@keyframes popIn {
-  from { transform: scale(0.7); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-.modal .grand-emoji { font-size: 5em; }
-.modal .grand-mot { font-size: 2.5em; font-weight: bold; color: #2c3e50; margin: 10px 0; }
-.modal .phon-modal { font-size: 1.1em; color: #7f8c8d; margin-bottom: 5px; }
-.modal .niv-modal { font-size: 0.9em; color: #95a5a6; margin-bottom: 20px; }
-
-.btn-ecouter {
-  background: linear-gradient(135deg, #3498db, #9b59b6);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 12px 30px;
-  font-size: 1.1em;
-  cursor: pointer;
-  margin-bottom: 10px;
-  width: 100%;
-  transition: all 0.2s;
-}
-.btn-ecouter:hover { transform: scale(1.05); }
-
-.btn-fermer {
-  background: #ecf0f1;
-  color: #7f8c8d;
-  border: none;
-  border-radius: 50px;
-  padding: 10px 30px;
-  font-size: 0.95em;
-  cursor: pointer;
-  width: 100%;
-}
-
-/* ── MODAL AJOUTER ── */
-.modal-ajout {
-  background: white;
-  border-radius: 25px;
-  padding: 30px;
-  max-width: 350px;
-  width: 90%;
-  animation: popIn 0.3s ease;
-}
-
-.modal-ajout h2 { color: #2c3e50; margin-bottom: 20px; text-align: center; }
-
-.champ {
-  width: 100%;
-  padding: 10px 15px;
-  border: 2px solid #ecf0f1;
-  border-radius: 10px;
-  font-size: 1em;
-  margin-bottom: 10px;
-  outline: none;
-  transition: border 0.2s;
-}
-.champ:focus { border-color: #3498db; }
-
-.champ-label {
-  font-size: 0.85em;
-  color: #7f8c8d;
-  margin-bottom: 3px;
-  display: block;
-}
-
-.btn-valider {
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 12px;
-  font-size: 1em;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 5px;
-}
-
-.info-local {
-  font-size: 0.75em;
-  color: #95a5a6;
-  text-align: center;
-  margin-top: 8px;
-}
+.card:hover { border-color: #3498db; transform: translateY(-2px); }
+.card .em { font-size: 1.8em; display: block; }
+.card .wrd { font-weight: bold; color: #2c3e50; font-size: 0.95em; }
+.card .lvl { font-size: 0.7em; background: #3498db; color: white; border-radius: 8px; padding: 1px 5px; display: inline-block; margin-top: 2px; }
+.no-result { text-align: center; color: #e74c3c; padding: 15px; width: 100%; }
+.counter { text-align: center; color: white; font-size: 0.85em; padding: 8px; }
 </style>
 </head>
 <body>
+<div class="app">
+  <h1>🔤 Clavier Phonétique Français</h1>
+  <div class="display-box">
+    <div class="word-screen" id="screen"><span class="cursor">|</span></div>
+    <div class="mic-status" id="micStatus"></div>
+    <div class="btns">
+      <button class="btn btn-mic" id="micBtn" onclick="toggleMic()">🎤 Dicter</button>
+      <button class="btn btn-del" onclick="delLetter()">⌫ Effacer</button>
+      <button class="btn btn-clear" onclick="clearAll()">🗑️ Tout effacer</button>
+      <button class="btn btn-search" onclick="searchWord()">🔍 Chercher</button>
+    </div>
+  </div>
 
-<h1>🎹 Clavier Phonétique</h1>
+  <div class="keyboard">
+    <div class="row">
+      <button class="k" onclick="add('a')">A</button>
+      <button class="k" onclick="add('z')">Z</button>
+      <button class="k" onclick="add('e')">E</button>
+      <button class="k" onclick="add('r')">R</button>
+      <button class="k" onclick="add('t')">T</button>
+      <button class="k" onclick="add('y')">Y</button>
+      <button class="k" onclick="add('u')">U</button>
+      <button class="k" onclick="add('i')">I</button>
+      <button class="k" onclick="add('o')">O</button>
+      <button class="k" onclick="add('p')">P</button>
+    </div>
+    <div class="row">
+      <button class="k" onclick="add('q')">Q</button>
+      <button class="k" onclick="add('s')">S</button>
+      <button class="k" onclick="add('d')">D</button>
+      <button class="k" onclick="add('f')">F</button>
+      <button class="k" onclick="add('g')">G</button>
+      <button class="k" onclick="add('h')">H</button>
+      <button class="k" onclick="add('j')">J</button>
+      <button class="k" onclick="add('k')">K</button>
+      <button class="k" onclick="add('l')">L</button>
+      <button class="k" onclick="add('m')">M</button>
+    </div>
+    <div class="row">
+      <button class="k" onclick="add('w')">W</button>
+      <button class="k" onclick="add('x')">X</button>
+      <button class="k" onclick="add('c')">C</button>
+      <button class="k" onclick="add('v')">V</button>
+      <button class="k" onclick="add('b')">B</button>
+      <button class="k" onclick="add('n')">N</button>
+      <button class="k wide" onclick="delLetter()">⌫</button>
+    </div>
+    <div class="row">
+      <button class="k accent" onclick="add('é')">É</button>
+      <button class="k accent" onclick="add('è')">È</button>
+      <button class="k accent" onclick="add('ê')">Ê</button>
+      <button class="k accent" onclick="add('à')">À</button>
+      <button class="k accent" onclick="add('â')">Â</button>
+      <button class="k accent" onclick="add('ù')">Ù</button>
+      <button class="k accent" onclick="add('û')">Û</button>
+      <button class="k accent" onclick="add('ô')">Ô</button>
+      <button class="k accent" onclick="add('î')">Î</button>
+      <button class="k accent" onclick="add('ç')">Ç</button>
+    </div>
+    <div class="row">
+      <button class="k space" onclick="add(' ')">espace</button>
+    </div>
+  </div>
 
-<!-- SAISIE -->
-<div class="saisie-box">
-  <div id="affichage" class="vide"></div>
-  <button class="btn-rond btn-back" onclick="effacerDernier()" title="Effacer dernière lettre">⌫</button>
-  <button class="btn-rond btn-mic" id="btnMic" onclick="toggleMic()" title="Dicter">🎤</button>
-  <button class="btn-rond btn-clear" onclick="toutEffacer()" title="Tout effacer">✕</button>
+  <div class="results-box" id="resultsBox">
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-grid" id="resultsGrid"></div>
+  </div>
+  <div class="counter" id="counter">⏳ Chargement des mots...</div>
 </div>
 
-<!-- SUGGESTIONS -->
-<div class="suggestions-titre" id="titreSuggestions">💡 Commence à taper...</div>
-<div class="suggestions-grid" id="suggestions"></div>
-
-<!-- CLAVIER VIRTUEL -->
-<div class="clavier">
-  <div class="rangee">
-    <button class="touche" onclick="ajouterLettre('a')">a</button>
-    <button class="touche" onclick="ajouterLettre('b')">b</button>
-    <button class="touche" onclick="ajouterLettre('c')">c</button>
-    <button class="touche" onclick="ajouterLettre('d')">d</button>
-    <button class="touche" onclick="ajouterLettre('e')">e</button>
-    <button class="touche" onclick="ajouterLettre('f')">f</button>
-    <button class="touche" onclick="ajouterLettre('g')">g</button>
-    <button class="touche" onclick="ajouterLettre('h')">h</button>
-    <button class="touche" onclick="ajouterLettre('i')">i</button>
-  </div>
-  <div class="rangee">
-    <button class="touche" onclick="ajouterLettre('j')">j</button>
-    <button class="touche" onclick="ajouterLettre('k')">k</button>
-    <button class="touche" onclick="ajouterLettre('l')">l</button>
-    <button class="touche" onclick="ajouterLettre('m')">m</button>
-    <button class="touche" onclick="ajouterLettre('n')">n</button>
-    <button class="touche" onclick="ajouterLettre('o')">o</button>
-    <button class="touche" onclick="ajouterLettre('p')">p</button>
-    <button class="touche" onclick="ajouterLettre('q')">q</button>
-    <button class="touche" onclick="ajouterLettre('r')">r</button>
-  </div>
-  <div class="rangee">
-    <button class="touche" onclick="ajouterLettre('s')">s</button>
-    <button class="touche" onclick="ajouterLettre('t')">t</button>
-    <button class="touche" onclick="ajouterLettre('u')">u</button>
-    <button class="touche" onclick="ajouterLettre('v')">v</button>
-    <button class="touche" onclick="ajouterLettre('w')">w</button>
-    <button class="touche" onclick="ajouterLettre('x')">x</button>
-    <button class="touche" onclick="ajouterLettre('y')">y</button>
-    <button class="touche" onclick="ajouterLettre('z')">z</button>
-  </div>
-  <div class="rangee">
-    <button class="touche speciale" onclick="effacerDernier()">⌫ effacer</button>
-    <button class="touche speciale" onclick="toutEffacer()">✕ tout</button>
-  </div>
-</div>
-
-<!-- BOUTON AJOUTER -->
-<button class="btn-ajouter" onclick="ouvrirAjout()">➕ Ajouter un mot à ma liste</button>
-
-<!-- MODAL : VOIR MOT -->
-<div class="modal-overlay" id="modalMot" onclick="fermerModalMot(event)">
-  <div class="modal">
-    <div class="grand-emoji" id="mEmoji"></div>
-    <div class="grand-mot" id="mMot"></div>
-    <div class="phon-modal" id="mPhon"></div>
-    <div class="niv-modal" id="mNiv"></div>
-    <button class="btn-ecouter" onclick="ecouterMot()">🔊 Écouter le mot</button>
-    <button class="btn-fermer" onclick="fermerModalMot()">Fermer</button>
-  </div>
-</div>
-
-<!-- MODAL : AJOUTER MOT -->
-<div class="modal-overlay" id="modalAjout" onclick="fermerModalAjout(event)">
-  <div class="modal-ajout">
-    <h2>➕ Ajouter un mot</h2>
-    <label class="champ-label">Le mot (orthographe correcte)</label>
-    <input class="champ" id="ajoutMot" type="text" placeholder="ex: papillon">
-    <label class="champ-label">Phonétique (comment ça sonne)</label>
-    <input class="champ" id="ajoutPhon" type="text" placeholder="ex: papion">
-    <label class="champ-label">Emoji (optionnel)</label>
-    <input class="champ" id="ajoutEmoji" type="text" placeholder="ex: 🦋">
-    <label class="champ-label">Niveau (P1 ou P2)</label>
-    <input class="champ" id="ajoutNiveau" type="text" placeholder="P1">
-    <button class="btn-valider" onclick="validerAjout()">✅ Ajouter</button>
-    <p class="info-local">⚠️ Le mot sera ajouté pour cette session uniquement</p>
-    <button class="btn-fermer" style="margin-top:8px" onclick="fermerModalAjout()">Annuler</button>
-  </div>
-</div>
+<!-- Le fichier words.js sera chargé ici -->
+<script src="words.js"></script>
 
 <script>
-// ── DONNÉES ──────────────────────────────────
-// Fusion words.js + mots ajoutés localement
-let tousLesMots = [...words];
-
-// Charger mots ajoutés précédemment (localStorage)
-const motsSauves = JSON.parse(localStorage.getItem('mots_ajoutes') || '[]');
-tousLesMots = [...tousLesMots, ...motsSauves];
-
-// ── ÉTAT ─────────────────────────────────────
-let saisi = '';
-let motActuel = null;
-let micActif = false;
+let typed = '';
 let recognition = null;
+let micOn = false;
 
-// ── NORMALISATION PHONÉTIQUE ──────────────────
-function normaliser(texte) {
-  return texte
-    .toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // accents
-    .replace(/ph/g, 'f')
-    .replace(/ch/g, 'X')
-    .replace(/ou/g, 'U')
-    .replace(/eau|au|o/g, 'O')
-    .replace(/ai|ei|è|ê|e/g, 'E')
-    .replace(/in|im|ein|ain|yn|ym/g, 'IN')
-    .replace(/an|en|am|em/g, 'AN')
-    .replace(/on|om/g, 'ON')
-    .replace(/un|um/g, 'UN')
-    .replace(/gn/g, 'NY')
-    .replace(/qu|k/g, 'K')
-    .replace(/[szx]$/g, '') // lettres finales muettes
-    .replace(/[td]$/g, '')
-    .replace(/[aeiou]+/g, m => m[0]); // voyelles doubles
-}
-
-// ── SCORE DE CORRESPONDANCE ───────────────────
-function calculerScore(saisieNorm, mot) {
-  const motNorm = normaliser(mot.w);
-  const phonNorm = normaliser(mot.p || '');
-
-  // Correspondance exacte début
-  if (motNorm.startsWith(saisieNorm)) return 100;
-  if (phonNorm.startsWith(saisieNorm)) return 95;
-
-  // Contient
-  if (motNorm.includes(saisieNorm)) return 70;
-  if (phonNorm.includes(saisieNorm)) return 65;
-
-  // Caractères en commun (longueur prefix commun)
-  let commun = 0;
-  for (let i = 0; i < Math.min(saisieNorm.length, motNorm.length); i++) {
-    if (saisieNorm[i] === motNorm[i]) commun++;
-    else break;
-  }
-  if (commun > 0) return 40 + (commun / saisieNorm.length) * 20;
-
-  return 0;
-}
-
-// ── MISE À JOUR AFFICHAGE ─────────────────────
-function mettreAJour() {
-  const affichage = document.getElementById('affichage');
-
-  if (saisi === '') {
-    affichage.textContent = '';
-    affichage.classList.add('vide');
-    document.getElementById('titreSuggestions').textContent = '💡 Commence à taper...';
-    document.getElementById('suggestions').innerHTML = '';
-    return;
-  }
-
-  affichage.textContent = saisi;
-  affichage.classList.remove('vide');
-
-  // Chercher suggestions
-  const saisieNorm = normaliser(saisi);
-  const resultats = tousLesMots
-    .map(mot => ({ mot, score: calculerScore(saisieNorm, mot) }))
-    .filter(r => r.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 20);
-
-  const titre = document.getElementById('titreSuggestions');
-  const grid = document.getElementById('suggestions');
-
-  if (resultats.length === 0) {
-    titre.textContent = '🔍 Aucun mot trouvé...';
-    grid.innerHTML = '<div class="aucun">Essaie d\'autres lettres ou ajoute ce mot !</div>';
-    return;
-  }
-
-  titre.textContent = `📝 ${resultats.length} mot(s) possible(s) :`;
-  grid.innerHTML = resultats.map(r => `
-    <div class="carte" onclick="voirMot('${echapper(r.mot.w)}','${r.mot.e || '📖'}','${echapper(r.mot.p || '')}','${r.mot.n || ''}')">
-      <span class="emoji">${r.mot.e || '📖'}</span>
-      <div class="mot">${r.mot.w}</div>
-      <div class="phonetique">${r.mot.p || ''}</div>
-    </div>
-  `).join('');
-}
-
-function echapper(s) {
-  return s.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-}
-
-// ── ACTIONS CLAVIER ───────────────────────────
-function ajouterLettre(lettre) {
-  saisi += lettre;
-  mettreAJour();
-}
-
-function effacerDernier() {
-  saisi = saisi.slice(0, -1);
-  mettreAJour();
-}
-
-function toutEffacer() {
-  saisi = '';
-  mettreAJour();
-}
-
-// ── CLAVIER PHYSIQUE ──────────────────────────
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
-  if (/^[a-zA-Z]$/.test(e.key)) {
-    ajouterLettre(e.key.toLowerCase());
-  } else if (e.key === 'Backspace') {
-    effacerDernier();
-  } else if (e.key === 'Escape') {
-    toutEffacer();
+// Vérifie que words.js est bien chargé
+window.addEventListener('load', function() {
+  if (typeof words !== 'undefined') {
+    document.getElementById('counter').textContent = '📚 ' + words.length + ' mots disponibles';
+  } else {
+    document.getElementById('counter').textContent = '❌ Erreur : fichier words.js manquant';
   }
 });
 
-// ── MODAL MOT ────────────────────────────────
-function voirMot(mot, emoji, phon, niveau) {
-  motActuel = mot;
-  document.getElementById('mEmoji').textContent = emoji;
-  document.getElementById('mMot').textContent = mot;
-  document.getElementById('mPhon').textContent = phon ? `[${phon}]` : '';
-  document.getElementById('mNiv').textContent = niveau ? `Niveau : ${niveau}` : '';
-  document.getElementById('modalMot').classList.add('open');
-  // Lire automatiquement
-  setTimeout(() => ecouterMot(), 400);
+function updateScreen() {
+  const screen = document.getElementById('screen');
+  screen.innerHTML = typed
+    ? typed.toUpperCase() + '<span class="cursor">|</span>'
+    : '<span class="cursor">|</span>';
 }
 
-function fermerModalMot(e) {
-  if (!e || e.target === document.getElementById('modalMot') || e.target.classList.contains('btn-fermer')) {
-    document.getElementById('modalMot').classList.remove('open');
-  }
+function add(letter) { typed += letter; updateScreen(); }
+function delLetter() { typed = typed.slice(0, -1); updateScreen(); }
+function clearAll() {
+  typed = '';
+  updateScreen();
+  document.getElementById('resultsBox').classList.remove('visible');
 }
 
-function ecouterMot() {
-  if (!motActuel) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(motActuel);
-  u.lang = 'fr-FR';
-  u.rate = 0.8;
-  speechSynthesis.speak(u);
-}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Backspace') { e.preventDefault(); delLetter(); }
+  else if (e.key === 'Enter') { e.preventDefault(); searchWord(); }
+  else if (e.key.length === 1) add(e.key.toLowerCase());
+});
 
-// ── MICRO / DICTÉE ────────────────────────────
 function toggleMic() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Utilisez Chrome ou Edge pour la dictée vocale.');
+    return;
+  }
+  if (micOn) { recognition.stop(); return; }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    alert('La dictée n\'est pas disponible.\nUtilise Google Chrome !');
-    return;
-  }
-
-  if (micActif) {
-    recognition.stop();
-    return;
-  }
-
   recognition = new SR();
   recognition.lang = 'fr-FR';
   recognition.continuous = false;
   recognition.interimResults = false;
-
   recognition.onstart = () => {
-    micActif = true;
-    document.getElementById('btnMic').classList.add('active');
-    document.getElementById('btnMic').textContent = '⏹';
+    micOn = true;
+    document.getElementById('micBtn').classList.add('on');
+    document.getElementById('micBtn').textContent = '🔴 En écoute...';
+    document.getElementById('micStatus').textContent = '🎤 Parlez maintenant...';
   };
-
-  recognition.onresult = e => {
-    const entendu = e.results[0][0].transcript.toLowerCase().trim();
-    saisi = entendu;
-    mettreAJour();
+  recognition.onresult = (e) => {
+    typed = e.results[0][0].transcript.toLowerCase().trim();
+    updateScreen();
+    searchWord();
   };
-
+  recognition.onerror = (e) => {
+    document.getElementById('micStatus').textContent = '❌ Erreur : ' + e.error;
+  };
   recognition.onend = () => {
-    micActif = false;
-    document.getElementById('btnMic').classList.remove('active');
-    document.getElementById('btnMic').textContent = '🎤';
+    micOn = false;
+    document.getElementById('micBtn').classList.remove('on');
+    document.getElementById('micBtn').textContent = '🎤 Dicter';
+    document.getElementById('micStatus').textContent = '';
   };
-
   recognition.start();
 }
 
-// ── AJOUTER UN MOT ────────────────────────────
-function ouvrirAjout() {
-  document.getElementById('ajoutMot').value = saisi;
-  document.getElementById('ajoutPhon').value = '';
-  document.getElementById('ajoutEmoji').value = '';
-  document.getElementById('ajoutNiveau').value = 'P1';
-  document.getElementById('modalAjout').classList.add('open');
+function speak(word) {
+  const u = new SpeechSynthesisUtterance(word);
+  u.lang = 'fr-FR'; u.rate = 0.8;
+  speechSynthesis.speak(u);
 }
 
-function fermerModalAjout(e) {
-  if (!e || e.target === document.getElementById('modalAjout') || e.target.classList.contains('btn-fermer')) {
-    document.getElementById('modalAjout').classList.remove('open');
+function normalize(str) {
+  return str.toLowerCase()
+    .replace(/[àâä]/g,'a').replace(/[éèêë]/g,'e')
+    .replace(/[îï]/g,'i').replace(/[ôö]/g,'o')
+    .replace(/[ùûü]/g,'u').replace(/ç/g,'c')
+    .replace(/œ/g,'oe').replace(/æ/g,'ae');
+}
+
+function phoneticMatch(input, word, phonetic) {
+  const inp = normalize(input);
+  const wrd = normalize(word);
+  const pho = normalize(phonetic);
+  if (wrd === inp) return 100;
+  if (wrd.startsWith(inp)) return 90;
+  if (pho === inp) return 85;
+  if (pho.startsWith(inp)) return 80;
+  if (wrd.includes(inp)) return 60;
+  const phonMap = [
+    ['ph','f'],['ch','sh'],['ou','u'],['eau','o'],['au','o'],
+    ['ai','e'],['ei','e'],['oi','wa'],['gn','ny'],['qu','k'],
+    ['ss','s'],['tion','sion'],['an','an'],['en','an'],['in','in'],['ain','in']
+  ];
+  let modInp = inp;
+  phonMap.forEach(([f,t]) => { modInp = modInp.replace(new RegExp(f,'g'),t); });
+  if (pho.includes(modInp)) return 70;
+  if (wrd.includes(modInp)) return 65;
+  return 0;
+}
+
+function searchWord() {
+  if (typeof words === 'undefined') {
+    alert('❌ Le fichier words.js est manquant !');
+    return;
   }
+  const input = typed.trim();
+  if (!input) { alert('Écris un mot d\'abord !'); return; }
+
+  const scored = words
+    .map(item => ({ ...item, score: phoneticMatch(input, item.w, item.p) }))
+    .filter(item => item.score > 0)
+    .sort((a,b) => b.score - a.score)
+    .slice(0, 40);
+
+  const box = document.getElementById('resultsBox');
+  const grid = document.getElementById('resultsGrid');
+  const title = document.getElementById('resultsTitle');
+  box.classList.add('visible');
+
+  if (scored.length === 0) {
+    title.textContent = '😕 Aucun résultat pour "' + input + '"';
+    grid.innerHTML = '<div class="no-result">Essaie une autre orthographe !</div>';
+    return;
+  }
+  title.textContent = '✅ ' + scored.length + ' résultat(s) pour "' + input + '"';
+  grid.innerHTML = scored.map(item =>
+    `<div class="card" onclick="speak('${item.w}')">
+      <span class="em">${item.e}</span>
+      <div class="wrd">${item.w}</div>
+      <span class="lvl">${item.n}</span>
+    </div>`
+  ).join('');
+  box.scrollIntoView({ behavior: 'smooth' });
 }
-
-function validerAjout() {
-  const mot = document.getElementById('ajoutMot').value.trim();
-  if (!mot) { alert('Entre un mot !'); return; }
-
-  const nouveau = {
-    w: mot,
-    p: document.getElementById('ajoutPhon').value.trim(),
-    e: document.getElementById('ajoutEmoji').value.trim() || '📖',
-    n: document.getElementById('ajoutNiveau').value.trim() || 'P1'
-  };
-
-  tousLesMots.push(nouveau);
-
-  // Sauvegarder en local
-  const sauves = JSON.parse(localStorage.getItem('mots_ajoutes') || '[]');
-  sauves.push(nouveau);
-  localStorage.setItem('mots_ajoutes', JSON.stringify(sauves));
-
-  fermerModalAjout();
-  mettreAJour();
-  alert(`✅ "${mot}" ajouté !`);
-}
-
-// ── INIT ──────────────────────────────────────
-mettreAJour();
 </script>
 </body>
 </html>
