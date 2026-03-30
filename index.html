@@ -1,22 +1,22 @@
-<!DOCTYPE html>
+content = '''<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clavier Phonétique</title>
-<script src="words.js"></script>
+<script src="words.js"><\/script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   padding: 20px;
 }
 
 .container {
-  max-width: 700px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
@@ -28,7 +28,6 @@ h1 {
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
-/* ── ÉCRAN DE SAISIE ── */
 .screen {
   background: white;
   border-radius: 20px;
@@ -50,7 +49,7 @@ h1 {
 }
 
 #display.empty::before {
-  content: 'Tape un mot...';
+  content: "Tape un mot...";
   color: #bbb;
   font-size: 0.7em;
   letter-spacing: 1px;
@@ -66,6 +65,7 @@ h1 {
   font-size: 1.4em;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 .btn-mic:hover { transform: scale(1.1); }
 .btn-mic.active { animation: pulse 1s infinite; background: #c0392b; }
@@ -80,6 +80,7 @@ h1 {
   font-size: 1.2em;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 .btn-clear:hover { transform: scale(1.1); }
 
@@ -88,18 +89,17 @@ h1 {
   50% { transform: scale(1.15); }
 }
 
-/* ── RÉSULTATS ── */
 .results {
   background: white;
   border-radius: 20px;
-  padding: 15px;
+  padding: 15px 20px;
   margin-bottom: 15px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.2);
   min-height: 80px;
 }
 
 .results-title {
-  font-size: 0.85em;
+  font-size: 0.8em;
   color: #999;
   margin-bottom: 10px;
   text-transform: uppercase;
@@ -127,68 +127,75 @@ h1 {
   align-items: center;
   gap: 8px;
 }
+.word-card:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(240,147,251,0.6); }
 
-.word-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(240,147,251,0.6);
-}
-
-.word-card:active { transform: scale(0.95); }
-
-.word-emoji { font-size: 1.4em; }
-
-.no-result {
-  color: #bbb;
-  font-style: italic;
-  padding: 10px;
+.phonetique-label {
+  font-size: 0.75em;
+  color: #aaa;
+  font-weight: normal;
 }
 
 /* ── CLAVIER VIRTUEL ── */
-.keyboard {
-  background: rgba(255,255,255,0.15);
+.keyboard-section {
+  background: white;
   border-radius: 20px;
   padding: 15px;
-  backdrop-filter: blur(10px);
+  margin-bottom: 15px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
-.key-row {
+.keyboard-title {
+  font-size: 0.8em;
+  color: #999;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.keyboard-row {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 6px;
-  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .key {
-  background: white;
-  border: none;
+  background: #f0f0f0;
+  border: 2px solid #ddd;
   border-radius: 10px;
-  width: 52px;
-  height: 52px;
+  padding: 10px 14px;
   font-size: 1.1em;
-  font-weight: bold;
-  color: #444;
   cursor: pointer;
-  box-shadow: 0 4px 0 #ccc;
-  transition: all 0.1s;
-  touch-action: manipulation;
+  transition: all 0.15s;
+  min-width: 42px;
+  text-align: center;
+  font-weight: bold;
+  color: #333;
 }
-
-.key:hover { background: #f0f0f0; }
-.key:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #ccc;
-}
+.key:hover { background: #667eea; color: white; border-color: #667eea; transform: scale(1.1); }
+.key:active { transform: scale(0.95); }
 
 .key-special {
-  background: #e8e8e8;
-  width: auto;
-  padding: 0 16px;
+  background: #e74c3c;
+  color: white;
+  border-color: #c0392b;
   font-size: 0.9em;
+  padding: 10px 18px;
 }
+.key-special:hover { background: #c0392b; border-color: #c0392b; color: white; }
 
-/* ── MODAL MOT ── */
-.modal-overlay {
+.key-space {
+  background: #3498db;
+  color: white;
+  border-color: #2980b9;
+  flex: 1;
+  max-width: 200px;
+}
+.key-space:hover { background: #2980b9; border-color: #2980b9; color: white; }
+
+/* ── MODAL ── */
+.modal {
   display: none;
   position: fixed;
   inset: 0;
@@ -197,202 +204,229 @@ h1 {
   align-items: center;
   justify-content: center;
 }
-.modal-overlay.open { display: flex; }
+.modal.open { display: flex; }
 
-.modal {
+.modal-box {
   background: white;
   border-radius: 25px;
   padding: 40px;
   text-align: center;
   max-width: 350px;
   width: 90%;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  animation: popIn 0.3s ease;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
 
-@keyframes popIn {
-  from { transform: scale(0.7); opacity: 0; }
-  to   { transform: scale(1);   opacity: 1; }
-}
-
-.modal-emoji { font-size: 5em; margin-bottom: 15px; }
+.modal-emoji { font-size: 4em; margin-bottom: 15px; }
 
 .modal-word {
   font-size: 2.5em;
   font-weight: bold;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
-.modal-phonetic {
+.modal-phonetique {
+  font-size: 1.2em;
   color: #999;
-  font-size: 1.1em;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
-.btn-speak {
+.btn-listen {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   border: none;
-  border-radius: 50px;
-  padding: 15px 35px;
-  font-size: 1.2em;
+  border-radius: 15px;
+  padding: 14px 30px;
+  font-size: 1.1em;
   cursor: pointer;
-  margin-bottom: 15px;
-  width: 100%;
+  margin: 5px;
   transition: all 0.2s;
 }
-.btn-speak:hover { transform: scale(1.05); }
+.btn-listen:hover { transform: scale(1.05); }
 
 .btn-close {
-  background: #eee;
+  background: #ecf0f1;
   color: #666;
   border: none;
-  border-radius: 50px;
-  padding: 10px 30px;
+  border-radius: 15px;
+  padding: 14px 30px;
   font-size: 1em;
   cursor: pointer;
-  width: 100%;
+  margin: 5px;
+  transition: all 0.2s;
 }
 .btn-close:hover { background: #ddd; }
 
+.no-result {
+  color: #bbb;
+  font-style: italic;
+  padding: 10px 0;
+}
 </style>
 </head>
 <body>
-
 <div class="container">
-  <h1>🔤 Clavier Phonétique</h1>
+  <h1>⌨️ Clavier Phonétique</h1>
 
-  <!-- Écran de saisie -->
+  <!-- Écran -->
   <div class="screen">
     <div id="display" class="empty"></div>
     <button class="btn-mic" id="btnMic" onclick="toggleMic()" title="Dicter">🎤</button>
-    <button class="btn-clear" onclick="clearAll()" title="Effacer">✕</button>
+    <button class="btn-clear" onclick="clearAll()" title="Effacer tout">✕</button>
   </div>
 
   <!-- Résultats -->
   <div class="results">
-    <div class="results-title">📖 Mots suggérés</div>
+    <div class="results-title">📖 Suggestions</div>
     <div class="words-list" id="wordsList">
-      <span class="no-result">Commence à taper pour voir des suggestions...</span>
+      <span class="no-result">Commence à taper pour voir les suggestions...</span>
     </div>
   </div>
 
   <!-- Clavier virtuel -->
-  <div class="keyboard">
-    <div class="key-row">
-      <button class="key" onclick="add('a')">a</button>
-      <button class="key" onclick="add('z')">z</button>
-      <button class="key" onclick="add('e')">e</button>
-      <button class="key" onclick="add('r')">r</button>
-      <button class="key" onclick="add('t')">t</button>
-      <button class="key" onclick="add('y')">y</button>
-      <button class="key" onclick="add('u')">u</button>
-      <button class="key" onclick="add('i')">i</button>
-      <button class="key" onclick="add('o')">o</button>
-      <button class="key" onclick="add('p')">p</button>
+  <div class="keyboard-section">
+    <div class="keyboard-title">🖱️ Clavier virtuel</div>
+    <div class="keyboard-row">
+      <button class="key" onclick="add(\'a\')">a</button>
+      <button class="key" onclick="add(\'z\')">z</button>
+      <button class="key" onclick="add(\'e\')">e</button>
+      <button class="key" onclick="add(\'r\')">r</button>
+      <button class="key" onclick="add(\'t\')">t</button>
+      <button class="key" onclick="add(\'y\')">y</button>
+      <button class="key" onclick="add(\'u\')">u</button>
+      <button class="key" onclick="add(\'i\')">i</button>
+      <button class="key" onclick="add(\'o\')">o</button>
+      <button class="key" onclick="add(\'p\')">p</button>
     </div>
-    <div class="key-row">
-      <button class="key" onclick="add('q')">q</button>
-      <button class="key" onclick="add('s')">s</button>
-      <button class="key" onclick="add('d')">d</button>
-      <button class="key" onclick="add('f')">f</button>
-      <button class="key" onclick="add('g')">g</button>
-      <button class="key" onclick="add('h')">h</button>
-      <button class="key" onclick="add('j')">j</button>
-      <button class="key" onclick="add('k')">k</button>
-      <button class="key" onclick="add('l')">l</button>
-      <button class="key" onclick="add('m')">m</button>
+    <div class="keyboard-row">
+      <button class="key" onclick="add(\'q\')">q</button>
+      <button class="key" onclick="add(\'s\')">s</button>
+      <button class="key" onclick="add(\'d\')">d</button>
+      <button class="key" onclick="add(\'f\')">f</button>
+      <button class="key" onclick="add(\'g\')">g</button>
+      <button class="key" onclick="add(\'h\')">h</button>
+      <button class="key" onclick="add(\'j\')">j</button>
+      <button class="key" onclick="add(\'k\')">k</button>
+      <button class="key" onclick="add(\'l\')">l</button>
+      <button class="key" onclick="add(\'m\')">m</button>
     </div>
-    <div class="key-row">
-      <button class="key" onclick="add('w')">w</button>
-      <button class="key" onclick="add('x')">x</button>
-      <button class="key" onclick="add('c')">c</button>
-      <button class="key" onclick="add('v')">v</button>
-      <button class="key" onclick="add('b')">b</button>
-      <button class="key" onclick="add('n')">n</button>
+    <div class="keyboard-row">
+      <button class="key" onclick="add(\'w\')">w</button>
+      <button class="key" onclick="add(\'x\')">x</button>
+      <button class="key" onclick="add(\'c\')">c</button>
+      <button class="key" onclick="add(\'v\')">v</button>
+      <button class="key" onclick="add(\'b\')">b</button>
+      <button class="key" onclick="add(\'n\')">n</button>
+    </div>
+    <div class="keyboard-row">
+      <button class="key" onclick="add(\'é\')">é</button>
+      <button class="key" onclick="add(\'è\')">è</button>
+      <button class="key" onclick="add(\'ê\')">ê</button>
+      <button class="key" onclick="add(\'à\')">à</button>
+      <button class="key" onclick="add(\'â\')">â</button>
+      <button class="key" onclick="add(\'ù\')">ù</button>
+      <button class="key" onclick="add(\'û\')">û</button>
+      <button class="key" onclick="add(\'î\')">î</button>
+      <button class="key" onclick="add(\'ô\')">ô</button>
+      <button class="key" onclick="add(\'ç\')">ç</button>
+    </div>
+    <div class="keyboard-row">
       <button class="key key-special" onclick="delLetter()">⌫</button>
+      <button class="key key-space" onclick="add(\' \')">espace</button>
+      <button class="key key-special" onclick="clearAll()">✕ Effacer</button>
     </div>
   </div>
 </div>
 
 <!-- Modal -->
-<div class="modal-overlay" id="modal" onclick="closeModal(event)">
-  <div class="modal">
-    <div class="modal-emoji" id="modalEmoji">🐱</div>
-    <div class="modal-word" id="modalWord">chat</div>
-    <div class="modal-phonetic" id="modalPhonetic"></div>
-    <button class="btn-speak" onclick="speakWord()">🔊 Écouter</button>
+<div class="modal" id="modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-emoji" id="modalEmoji">📖</div>
+    <div class="modal-word" id="modalWord"></div>
+    <div class="modal-phonetique" id="modalPhonetique"></div>
+    <br>
+    <button class="btn-listen" onclick="speakWord()">🔊 Écouter</button>
     <button class="btn-close" onclick="closeModal()">Fermer</button>
   </div>
 </div>
 
 <script>
-// ── VARIABLES ────────────────────────────────
-let typed = '';
-let currentWord = '';
-let recognition = null;
-let micActive = false;
+// ── ÉTAT ──────────────────────────────────────
+var typed = "";
+var currentWord = "";
+var currentPhonetique = "";
+var micActive = false;
+var recognition = null;
 
-// ── MOTEUR PHONÉTIQUE ─────────────────────────
+// ── NORMALISE (retire accents pour comparaison) ──
 function normalize(str) {
   return str.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/ph/g, 'f')
-    .replace(/ch/g, 'x')
-    .replace(/qu/g, 'k')
-    .replace(/gn/g, 'n')
-    .replace(/eau|au/g, 'o')
-    .replace(/ei|ai|et/g, 'e')
-    .replace(/ou/g, 'u')
-    .replace(/oi/g, 'wa')
-    .replace(/in|im|ain|ein/g, 'in')
-    .replace(/an|am|en|em/g, 'an')
-    .replace(/on|om/g, 'on')
-    .replace(/ss|s/g, 's')
-    .replace(/tt|t/g, 't')
-    .replace(/[aeiouy]+/g, m => m[0])
-    .replace(/([a-z])\1+/g, '$1');
+    .normalize("NFD")
+    .replace(/[\\u0300-\\u036f]/g, "")
+    .replace(/[^a-z]/g, "");
 }
 
+// ── SCORE DE CORRESPONDANCE ───────────────────
 function score(input, word) {
-  const a = normalize(input);
-  const b = normalize(word);
-  if (b.startsWith(a)) return 100;
-  if (b.includes(a)) return 80;
-  let match = 0;
-  for (let i = 0; i < Math.min(a.length, b.length); i++) {
-    if (a[i] === b[i]) match++;
-    else break;
+  var ni = normalize(input);
+  var nw = normalize(word);
+  if (nw.startsWith(ni)) return 100 + (100 - nw.length);
+  if (nw.includes(ni)) return 50;
+  var count = 0;
+  for (var i = 0; i < ni.length; i++) {
+    if (nw.includes(ni[i])) count++;
   }
-  return Math.round((match / Math.max(a.length, b.length)) * 60);
+  return Math.round((count / Math.max(ni.length, 1)) * 30);
 }
 
-// ── RECHERCHE ────────────────────────────────
+// ── SCORE PHONÉTIQUE ──────────────────────────
+function scorePhonetic(input, phonetique) {
+  if (!phonetique) return 0;
+  var ni = normalize(input);
+  var np = normalize(phonetique);
+  if (np.startsWith(ni)) return 80;
+  if (np.includes(ni)) return 40;
+  return 0;
+}
+
+// ── RECHERCHE ─────────────────────────────────
 function search() {
-  const list = document.getElementById('wordsList');
-  if (typed.length < 2) {
-    list.innerHTML = '<span class="no-result">Commence à taper pour voir des suggestions...</span>';
+  var container = document.getElementById("wordsList");
+  var t = typed.trim();
+
+  if (t.length === 0) {
+    container.innerHTML = \'<span class="no-result">Commence à taper pour voir les suggestions...</span>\';
     return;
   }
 
-  const results = words
-    .map(w => ({ ...w, score: score(typed, w.mot) }))
-    .filter(w => w.score >= 40)
-    .sort((a, b) => b.score - a.score)
+  var results = words
+    .map(function(w) {
+      var s = Math.max(score(t, w.w), scorePhonetic(t, w.p));
+      return { word: w, score: s };
+    })
+    .filter(function(r) { return r.score > 10; })
+    .sort(function(a, b) { return b.score - a.score; })
     .slice(0, 12);
 
   if (results.length === 0) {
-    list.innerHTML = '<span class="no-result">Aucun mot trouvé... essaie autrement 🤔</span>';
+    container.innerHTML = \'<span class="no-result">Aucun mot trouvé... continue à taper !</span>\';
     return;
   }
 
-  list.innerHTML = results.map(w => `
-    <button class="word-card" onclick="showWord('${w.mot}','${w.emoji || '📖'}')">
-      <span class="word-emoji">${w.emoji || '📖'}</span>
-      <span>${w.mot}</span>
-    </button>
-  `).join('');
+  container.innerHTML = results.map(function(r) {
+    var w = r.word;
+    var emoji = w.e || "📖";
+    var mot = w.w;
+    var phon = w.p || "";
+    return \'<button class="word-card" onclick="showWord(\\\'\'
+      + mot.replace(/\\\'/g, "\\\\\'") + \'\\\', \\\'\'
+      + emoji + \'\\\', \\\'\'
+      + phon.replace(/\\\'/g, "\\\\\'") + \'\\\')">\'
+      + \'<span>\'+ emoji +\'</span>\'
+      + \'<span>\'+ mot +\'</span>\'
+      + (phon ? \'<span class="phonetique-label">\'+ phon +\'</span>\' : \'\')
+      + \'<\/button>\';
+  }).join("");
 }
 
 // ── SAISIE ────────────────────────────────────
@@ -409,36 +443,42 @@ function delLetter() {
 }
 
 function clearAll() {
-  typed = '';
+  typed = "";
   updateDisplay();
   search();
 }
 
 function updateDisplay() {
-  const d = document.getElementById('display');
+  var d = document.getElementById("display");
   d.textContent = typed;
-  d.classList.toggle('empty', typed === '');
+  if (typed === "") {
+    d.classList.add("empty");
+  } else {
+    d.classList.remove("empty");
+  }
 }
 
 // ── CLAVIER PHYSIQUE ──────────────────────────
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Backspace') { e.preventDefault(); delLetter(); }
-  else if (e.key === 'Escape') { clearAll(); }
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Backspace") { e.preventDefault(); delLetter(); }
+  else if (e.key === "Escape") { clearAll(); }
   else if (/^[a-zA-ZÀ-ÿ]$/.test(e.key)) { add(e.key.toLowerCase()); }
 });
 
 // ── MODAL ─────────────────────────────────────
-function showWord(mot, emoji) {
+function showWord(mot, emoji, phonetique) {
   currentWord = mot;
-  document.getElementById('modalWord').textContent = mot;
-  document.getElementById('modalEmoji').textContent = emoji;
-  document.getElementById('modal').classList.add('open');
+  currentPhonetique = phonetique || "";
+  document.getElementById("modalWord").textContent = mot;
+  document.getElementById("modalEmoji").textContent = emoji;
+  document.getElementById("modalPhonetique").textContent = phonetique ? "[ " + phonetique + " ]" : "";
+  document.getElementById("modal").classList.add("open");
   speakWord();
 }
 
 function closeModal(e) {
-  if (!e || e.target === document.getElementById('modal') || e.target.classList.contains('btn-close')) {
-    document.getElementById('modal').classList.remove('open');
+  if (!e || e.target === document.getElementById("modal") || e.target.classList.contains("btn-close")) {
+    document.getElementById("modal").classList.remove("open");
   }
 }
 
@@ -446,16 +486,17 @@ function closeModal(e) {
 function speakWord() {
   if (!currentWord) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(currentWord);
-  u.lang = 'fr-FR';
+  var u = new SpeechSynthesisUtterance(currentWord);
+  u.lang = "fr-FR";
   u.rate = 0.8;
   speechSynthesis.speak(u);
 }
 
 // ── MICRO / DICTÉE ────────────────────────────
 function toggleMic() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('La dictée n\'est pas disponible sur ce navigateur. Essayez Chrome.');
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    alert("La dictée n\'est pas disponible sur ce navigateur. Utilisez Chrome.");
     return;
   }
 
@@ -464,30 +505,34 @@ function toggleMic() {
     return;
   }
 
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
-  recognition.lang = 'fr-FR';
+  recognition.lang = "fr-FR";
   recognition.interimResults = false;
 
-  recognition.onstart = () => {
+  recognition.onstart = function() {
     micActive = true;
-    document.getElementById('btnMic').classList.add('active');
+    document.getElementById("btnMic").classList.add("active");
   };
 
-  recognition.onresult = (e) => {
-    const heard = e.results[0][0].transcript.toLowerCase().trim();
+  recognition.onresult = function(e) {
+    var heard = e.results[0][0].transcript.toLowerCase().trim();
     typed = heard;
     updateDisplay();
     search();
   };
 
-  recognition.onend = () => {
+  recognition.onend = function() {
     micActive = false;
-    document.getElementById('btnMic').classList.remove('active');
+    document.getElementById("btnMic").classList.remove("active");
   };
 
   recognition.start();
 }
-</script>
+<\/script>
 </body>
-</html>
+</html>'''
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(content)
+
+print("index.html generated successfully")
