@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clavier Phonétique Français</title>
+<!-- LIEN VERS WORDS.JS -->
+<script src="words.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -14,7 +16,6 @@ body {
 h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 .app { max-width: 800px; margin: 0 auto; }
 
-/* SAISIE */
 .display-box {
   background: white; border-radius: 15px;
   padding: 20px; margin-bottom: 15px;
@@ -42,7 +43,6 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
 .mic-status { text-align: center; color: #e74c3c; font-size: 0.85em; margin-top: 8px; min-height: 20px; }
 
-/* SUGGESTIONS EN TEMPS RÉEL */
 .suggestions-box {
   background: white; border-radius: 15px;
   padding: 15px; margin-bottom: 15px;
@@ -68,7 +68,6 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 .card .lvl { font-size: 0.7em; background: #3498db; color: white; border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 3px; }
 .no-result { text-align: center; color: #bdc3c7; padding: 20px; font-style: italic; }
 
-/* CLAVIER */
 .keyboard {
   background: #2c3e50; border-radius: 15px;
   padding: 15px; margin-bottom: 15px;
@@ -89,7 +88,6 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 .k.space  { width: 280px; font-size: 0.85em; color: #888; background: #ecf0f1; }
 .counter  { text-align: center; color: rgba(255,255,255,0.8); font-size: 0.85em; padding: 5px; }
 
-/* MODAL AJOUTER MOT */
 .modal-bg {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,0.7); z-index: 999;
@@ -111,7 +109,6 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 .btn-valider { background: #27ae60; color: white; }
 .btn-annuler { background: #ecf0f1; color: #555; }
 
-/* MODAL VOIR MOT */
 .modal-mot-box {
   background: white; border-radius: 20px;
   padding: 30px; width: 90%; max-width: 320px; text-align: center;
@@ -127,7 +124,6 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 <div class="app">
   <h1>🔤 Clavier Phonétique Français</h1>
 
-  <!-- ZONE DE SAISIE -->
   <div class="display-box">
     <div class="word-screen" id="screen"><span class="cursor">|</span></div>
     <div class="mic-status" id="micStatus"></div>
@@ -139,13 +135,11 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
     </div>
   </div>
 
-  <!-- SUGGESTIONS EN TEMPS RÉEL -->
   <div class="suggestions-box">
     <div class="suggestions-titre" id="sugTitre">💡 Commence à taper pour voir les suggestions...</div>
     <div class="suggestions-grid"  id="sugGrid"></div>
   </div>
 
-  <!-- CLAVIER AZERTY -->
   <div class="keyboard">
     <div class="row">
       <button class="k" onclick="add('a')">A</button>
@@ -179,7 +173,7 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
       <button class="k" onclick="add('v')">V</button>
       <button class="k" onclick="add('b')">B</button>
       <button class="k" onclick="add('n')">N</button>
-      <button class="k wide" onclick="clearAll()">🗑️ Tout</button>
+      <button class="k wide" onclick="clearAll()">🗑️ Eff. tout</button>
     </div>
     <div class="row">
       <button class="k accent" onclick="add('é')">É</button>
@@ -196,9 +190,8 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
     <div class="row">
       <button class="k space" onclick="add(' ')">espace</button>
     </div>
+    <div class="counter" id="counter">⏳ Chargement...</div>
   </div>
-
-  <div class="counter" id="counter">⏳ Chargement...</div>
 </div>
 
 <!-- MODAL VOIR UN MOT -->
@@ -228,130 +221,28 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 
 <script>
 // ════════════════════════════════════════════════
-// BANQUE DE MOTS INTÉGRÉE (+ words.js si présent)
+// BANQUE = words.js + mots personnels localStorage
 // ════════════════════════════════════════════════
-var banque = [
-  {w:'maison',     p:'mézon',      e:'🏠', n:'P1'},
-  {w:'chien',      p:'chiin',      e:'🐶', n:'P1'},
-  {w:'chat',       p:'cha',        e:'🐱', n:'P1'},
-  {w:'pantalon',   p:'pantalon',   e:'👖', n:'P1'},
-  {w:'bateau',     p:'bato',       e:'⛵', n:'P1'},
-  {w:'papillon',   p:'papion',     e:'🦋', n:'P2'},
-  {w:'soleil',     p:'soley',      e:'☀️', n:'P1'},
-  {w:'voiture',    p:'voitire',    e:'🚗', n:'P1'},
-  {w:'éléphant',   p:'elefan',     e:'🐘', n:'P2'},
-  {w:'chocolat',   p:'chokola',    e:'🍫', n:'P1'},
-  {w:'girafe',     p:'jiraf',      e:'🦒', n:'P2'},
-  {w:'orange',     p:'oranje',     e:'🍊', n:'P1'},
-  {w:'pomme',      p:'pom',        e:'🍎', n:'P1'},
-  {w:'école',      p:'ekol',       e:'🏫', n:'P1'},
-  {w:'livre',      p:'livr',       e:'📚', n:'P1'},
-  {w:'ami',        p:'ami',        e:'👫', n:'P1'},
-  {w:'famille',    p:'famiy',      e:'👨‍👩‍👧', n:'P1'},
-  {w:'fleur',      p:'fleur',      e:'🌸', n:'P1'},
-  {w:'arbre',      p:'arbr',       e:'🌳', n:'P1'},
-  {w:'oiseau',     p:'wazo',       e:'🐦', n:'P1'},
-  {w:'vache',      p:'vach',       e:'🐄', n:'P1'},
-  {w:'cochon',     p:'kochon',     e:'🐷', n:'P1'},
-  {w:'mouton',     p:'mouton',     e:'🐑', n:'P1'},
-  {w:'cheval',     p:'cheval',     e:'🐴', n:'P1'},
-  {w:'lapin',      p:'lapin',      e:'🐰', n:'P1'},
-  {w:'grenouille', p:'grenouiy',   e:'🐸', n:'P2'},
-  {w:'tortue',     p:'tortu',      e:'🐢', n:'P1'},
-  {w:'poisson',    p:'poisson',    e:'🐟', n:'P1'},
-  {w:'requin',     p:'rekin',      e:'🦈', n:'P2'},
-  {w:'baleine',    p:'balin',      e:'🐋', n:'P2'},
-  {w:'montagne',   p:'montany',    e:'⛰️', n:'P2'},
-  {w:'rivière',    p:'rivière',    e:'🏞️', n:'P2'},
-  {w:'forêt',      p:'forè',       e:'🌲', n:'P1'},
-  {w:'plage',      p:'plaj',       e:'🏖️', n:'P1'},
-  {w:'nuage',      p:'nuaj',       e:'☁️', n:'P1'},
-  {w:'pluie',      p:'plui',       e:'🌧️', n:'P1'},
-  {w:'neige',      p:'nej',        e:'❄️', n:'P1'},
-  {w:'vent',       p:'van',        e:'💨', n:'P1'},
-  {w:'feu',        p:'feu',        e:'🔥', n:'P1'},
-  {w:'eau',        p:'o',          e:'💧', n:'P1'},
-  {w:'pain',       p:'pin',        e:'🍞', n:'P1'},
-  {w:'fromage',    p:'fromaj',     e:'🧀', n:'P1'},
-  {w:'beurre',     p:'beur',       e:'🧈', n:'P1'},
-  {w:'lait',       p:'lé',         e:'🥛', n:'P1'},
-  {w:'oeuf',       p:'euf',        e:'🥚', n:'P1'},
-  {w:'sucre',      p:'sukr',       e:'🍬', n:'P1'},
-  {w:'gâteau',     p:'gato',       e:'🎂', n:'P1'},
-  {w:'bonbon',     p:'bonbon',     e:'🍭', n:'P1'},
-  {w:'glace',      p:'glas',       e:'🍦', n:'P1'},
-  {w:'pizza',      p:'pidza',      e:'🍕', n:'P1'},
-  {w:'soupe',      p:'soup',       e:'🍲', n:'P1'},
-  {w:'salade',     p:'salad',      e:'🥗', n:'P1'},
-  {w:'tomate',     p:'tomat',      e:'🍅', n:'P1'},
-  {w:'carotte',    p:'karot',      e:'🥕', n:'P1'},
-  {w:'haricot',    p:'ariko',      e:'🫘', n:'P2'},
-  {w:'chambre',    p:'chambr',     e:'🛏️', n:'P1'},
-  {w:'cuisine',    p:'kuizin',     e:'🍳', n:'P1'},
-  {w:'jardin',     p:'jardin',     e:'🌻', n:'P1'},
-  {w:'fenêtre',    p:'fenetr',     e:'🪟', n:'P1'},
-  {w:'porte',      p:'port',       e:'🚪', n:'P1'},
-  {w:'table',      p:'tabl',       e:'🪑', n:'P1'},
-  {w:'chaise',     p:'chez',       e:'🪑', n:'P1'},
-  {w:'vélo',       p:'velo',       e:'🚲', n:'P1'},
-  {w:'avion',      p:'avion',      e:'✈️', n:'P1'},
-  {w:'train',      p:'trin',       e:'🚂', n:'P1'},
-  {w:'bus',        p:'bus',        e:'🚌', n:'P1'},
-  {w:'camion',     p:'kamion',     e:'🚛', n:'P1'},
-  {w:'moto',       p:'moto',       e:'🏍️', n:'P1'},
-  {w:'fusée',      p:'fuzé',       e:'🚀', n:'P2'},
-  {w:'rouge',      p:'rouj',       e:'🔴', n:'P1'},
-  {w:'bleu',       p:'bleu',       e:'🔵', n:'P1'},
-  {w:'vert',       p:'ver',        e:'🟢', n:'P1'},
-  {w:'jaune',      p:'jon',        e:'🟡', n:'P1'},
-  {w:'noir',       p:'nwar',       e:'⚫', n:'P1'},
-  {w:'blanc',      p:'blan',       e:'⚪', n:'P1'},
-  {w:'rose',       p:'roz',        e:'🌸', n:'P1'},
-  {w:'violet',     p:'violet',     e:'🟣', n:'P1'},
-  {w:'orange',     p:'oranj',      e:'🟠', n:'P1'},
-  {w:'professeur', p:'profeseur',  e:'👨‍🏫', n:'P2'},
-  {w:'directeur',  p:'direkteur',  e:'🏢', n:'P2'},
-  {w:'médecin',    p:'medesin',    e:'👨‍⚕️', n:'P2'},
-  {w:'pompier',    p:'pompié',     e:'🚒', n:'P1'},
-  {w:'policier',   p:'polisié',    e:'👮', n:'P2'},
-  {w:'boulanger',  p:'boulanji',   e:'🥖', n:'P2'},
-  {w:'printemps',  p:'printan',    e:'🌷', n:'P2'},
-  {w:'automne',    p:'oton',       e:'🍂', n:'P2'},
-  {w:'hiver',      p:'iver',       e:'⛄', n:'P1'},
-  {w:'été',        p:'eté',        e:'🌞', n:'P1'},
-  {w:'lundi',      p:'lundi',      e:'📅', n:'P1'},
-  {w:'mardi',      p:'mardi',      e:'📅', n:'P1'},
-  {w:'mercredi',   p:'merkredi',   e:'📅', n:'P1'},
-  {w:'jeudi',      p:'jeudi',      e:'📅', n:'P1'},
-  {w:'vendredi',   p:'vandredi',   e:'📅', n:'P1'},
-  {w:'samedi',     p:'samedi',     e:'📅', n:'P1'},
-  {w:'dimanche',   p:'dimanch',    e:'📅', n:'P1'},
-];
+var banque = [];
 
-// Fusionner avec words.js si disponible
-try {
-  if (typeof words !== 'undefined' && Array.isArray(words)) {
-    words.forEach(function(m) {
-      var existe = banque.some(function(b) {
-        return b.w.toLowerCase() === m.w.toLowerCase();
-      });
-      if (!existe) banque.push(m);
-    });
-    document.getElementById('counter').textContent =
-      '📚 ' + banque.length + ' mots disponibles (words.js chargé ✅)';
-  } else {
-    document.getElementById('counter').textContent =
-      '📚 ' + banque.length + ' mots disponibles';
-  }
-} catch(e) {
+// Charger words.js (doit être chargé AVANT ce script via <script src="words.js">)
+if (typeof words !== 'undefined' && Array.isArray(words)) {
+  banque = words.slice();
   document.getElementById('counter').textContent =
-    '📚 ' + banque.length + ' mots disponibles';
+    '📚 ' + banque.length + ' mots disponibles ✅';
+} else {
+  document.getElementById('counter').textContent =
+    '⚠️ words.js non trouvé — place le fichier dans le même dossier !';
 }
 
 // Charger mots ajoutés par l'élève
 try {
   var extras = JSON.parse(localStorage.getItem('mots_extra') || '[]');
   extras.forEach(function(m) { banque.push(m); });
+  if (extras.length > 0) {
+    document.getElementById('counter').textContent =
+      '📚 ' + banque.length + ' mots disponibles (' + extras.length + ' perso ✅)';
+  }
 } catch(e) {}
 
 // ════════════════════════════════════════════════
@@ -375,25 +266,10 @@ function updateScreen() {
 // ════════════════════════════════════════════════
 // CLAVIER
 // ════════════════════════════════════════════════
-function add(l) {
-  typed += l;
-  updateScreen();
-  predire();
-}
+function add(l) { typed += l; updateScreen(); predire(); }
+function delLetter() { typed = typed.slice(0,-1); updateScreen(); predire(); }
+function clearAll()  { typed = ''; updateScreen(); predire(); }
 
-function delLetter() {
-  typed = typed.slice(0, -1);
-  updateScreen();
-  predire();
-}
-
-function clearAll() {
-  typed = '';
-  updateScreen();
-  predire();
-}
-
-// Clavier physique
 document.addEventListener('keydown', function(e) {
   if (document.querySelector('.modal-bg.open')) return;
   if (e.key === 'Backspace') { e.preventDefault(); delLetter(); }
@@ -426,15 +302,12 @@ function scorer(saisie, mot) {
   var s  = norm(saisie);
   var mw = norm(mot.w || '');
   var mp = norm(mot.p || '');
-
-  if (mw === s)          return 100;
-  if (mw.startsWith(s))  return 90;
-  if (mp === s)          return 85;
-  if (mp.startsWith(s))  return 80;
-  if (mw.includes(s))    return 50;
-  if (mp.includes(s))    return 45;
-
-  // Correspondance partielle lettre par lettre
+  if (mw === s)         return 100;
+  if (mw.startsWith(s)) return 90;
+  if (mp === s)         return 85;
+  if (mp.startsWith(s)) return 80;
+  if (mw.includes(s))   return 50;
+  if (mp.includes(s))   return 45;
   var c = 0;
   for (var i = 0; i < Math.min(s.length, mw.length); i++) {
     if (s[i] === mw[i]) c++; else break;
@@ -471,7 +344,6 @@ function predire() {
   }
 
   titre.textContent = '✅ ' + res.length + ' suggestion(s) pour "' + typed + '"';
-
   var html = '';
   for (var j = 0; j < res.length; j++) {
     var m = res[j].m;
@@ -488,7 +360,7 @@ function predire() {
 }
 
 // ════════════════════════════════════════════════
-// MODAL VOIR MOT
+// MODAL VOIR MOT + AUDIO
 // ════════════════════════════════════════════════
 function voirMot(mot, emoji, phon) {
   motActuel = mot;
@@ -521,41 +393,31 @@ document.getElementById('modalMot').addEventListener('click', function(e) {
 // ════════════════════════════════════════════════
 function toggleMic() {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    alert('Dictée vocale disponible uniquement sur Chrome ou Edge.');
-    return;
-  }
+  if (!SR) { alert('Dictée vocale disponible uniquement sur Chrome ou Edge.'); return; }
   if (micOn) { recog && recog.stop(); return; }
-
   recog = new SR();
   recog.lang = 'fr-FR';
   recog.continuous = false;
   recog.interimResults = false;
-
   recog.onstart = function() {
     micOn = true;
     document.getElementById('micBtn').classList.add('on');
     document.getElementById('micBtn').textContent = '🔴 En écoute...';
     document.getElementById('micStatus').textContent = '🎤 Parlez maintenant...';
   };
-
   recog.onresult = function(e) {
     typed = e.results[0][0].transcript.toLowerCase().replace(/\s+/g,'');
-    updateScreen();
-    predire();
+    updateScreen(); predire();
   };
-
   recog.onerror = function(e) {
     document.getElementById('micStatus').textContent = '❌ Erreur : ' + e.error;
   };
-
   recog.onend = function() {
     micOn = false;
     document.getElementById('micBtn').classList.remove('on');
     document.getElementById('micBtn').textContent = '🎤 Dicter';
     document.getElementById('micStatus').textContent = '';
   };
-
   recog.start();
 }
 
@@ -568,38 +430,30 @@ function ouvrirAjout() {
   document.getElementById('aEmoji').value = '';
   document.getElementById('modalAjout').classList.add('open');
 }
-
 function fermerAjout() {
   document.getElementById('modalAjout').classList.remove('open');
 }
-
 document.getElementById('modalAjout').addEventListener('click', function(e) {
   if (e.target === this) fermerAjout();
 });
-
 function validerAjout() {
   var mot = document.getElementById('aMot').value.trim();
   if (!mot) { alert('Entre un mot !'); return; }
-
   var nouveau = {
     w: mot,
     p: document.getElementById('aPhon').value.trim(),
     e: document.getElementById('aEmoji').value.trim() || '📖',
     n: 'perso'
   };
-
   banque.push(nouveau);
-
   try {
     var extras = JSON.parse(localStorage.getItem('mots_extra') || '[]');
     extras.push(nouveau);
     localStorage.setItem('mots_extra', JSON.stringify(extras));
   } catch(e) {}
-
   fermerAjout();
   predire();
-  document.getElementById('counter').textContent =
-    '📚 ' + banque.length + ' mots disponibles';
+  document.getElementById('counter').textContent = '📚 ' + banque.length + ' mots disponibles';
   alert('✅ "' + mot + '" ajouté à votre liste !');
 }
 
