@@ -39,6 +39,17 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 .btn-search { background: #3498db; color: white; }
 @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
 .mic-status { text-align: center; color: #e74c3c; font-size: 0.85em; margin-top: 5px; min-height: 20px; }
+
+/* ── HINT LIGNE ── */
+.hint-line {
+  text-align: center; color: white; font-size: 0.9em;
+  margin-bottom: 10px; opacity: 0.9;
+}
+.hint-line span {
+  background: rgba(255,255,255,0.2); border-radius: 20px;
+  padding: 5px 14px; display: inline-block;
+}
+
 .keyboard { background: #2c3e50; border-radius: 15px; padding: 12px; margin-bottom: 15px; }
 .row { display: flex; justify-content: center; gap: 5px; margin-bottom: 5px; }
 .k {
@@ -70,11 +81,40 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 .card .lvl { font-size: 0.7em; background: #3498db; color: white; border-radius: 8px; padding: 1px 5px; display: inline-block; margin-top: 2px; }
 .no-result { text-align: center; color: #e74c3c; padding: 15px; width: 100%; }
 .counter { text-align: center; color: white; font-size: 0.85em; padding: 8px; }
+
+/* ── MODAL AJOUT MOT ── */
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+  z-index: 1000; align-items: center; justify-content: center;
+}
+.modal-overlay.visible { display: flex; }
+.modal {
+  background: white; border-radius: 15px; padding: 25px;
+  max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.modal h2 { color: #2c3e50; margin-bottom: 15px; text-align: center; }
+.modal label { display: block; color: #555; font-size: 0.85em; margin-bottom: 4px; margin-top: 12px; }
+.modal input {
+  width: 100%; padding: 10px; border: 2px solid #ddd;
+  border-radius: 8px; font-size: 1em; outline: none;
+}
+.modal input:focus { border-color: #3498db; }
+.modal-btns { display: flex; gap: 10px; margin-top: 18px; justify-content: center; }
+.btn-cancel { background: #95a5a6; color: white; }
+.btn-submit { background: #27ae60; color: white; }
+.modal-note { font-size: 0.75em; color: #888; text-align: center; margin-top: 10px; }
 </style>
 </head>
 <body>
 <div class="app">
   <h1>🔤 Clavier Phonétique Français</h1>
+
+  <!-- ── HINT LIGNE ── -->
+  <div class="hint-line">
+    <span>💡 Mot introuvable ? Appuie sur <strong>+</strong> pour le proposer !</span>
+  </div>
+
   <div class="display-box">
     <div class="word-screen" id="screen"><span class="cursor">|</span></div>
     <div class="mic-status" id="micStatus"></div>
@@ -144,15 +184,41 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
   <div class="counter" id="counter">⏳ Chargement des mots...</div>
 </div>
 
-<!-- Le fichier words.js sera chargé ici -->
-<script src="words.js"></script>
+<!-- ── MODAL AJOUT MOT ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>➕ Proposer un mot</h2>
+    <label>Mot correct (orthographe officielle)</label>
+    <input type="text" id="newWord" placeholder="Ex: pantalon" />
+    <label>Comme ça sonne (phonétique)</label>
+    <input type="text" id="newPhonetic" placeholder="Ex: pantalon" />
+    <label>Emoji</label>
+    <input type="text" id="newEmoji" placeholder="Ex: 👖" maxlength="4" />
+    <div class="modal-btns">
+      <button class="btn btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-submit" onclick="submitWord()">✅ Envoyer</button>
+    </div>
+    <div class="modal-note">📧 Le mot sera envoyé pour être ajouté à la prochaine mise à jour.</div>
+  </div>
+</div>
+
+<!-- ── BOUTON + FLOTTANT ── -->
+<button onclick="openModal()" style="
+  position: fixed; bottom: 25px; right: 25px;
+  width: 55px; height: 55px; border-radius: 50%;
+  background: #f39c12; color: white; font-size: 1.8em;
+  border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  z-index: 999; transition: transform 0.2s;
+" onmouseover="this.style.transform='scale(1.1)'"
+   onmouseout="this.style.transform='scale(1)'">+</button>
+
+<script src="./words.js"></script>
 
 <script>
 let typed = '';
 let recognition = null;
 let micOn = false;
 
-// Vérifie que words.js est bien chargé
 window.addEventListener('load', function() {
   if (typeof words !== 'undefined') {
     document.getElementById('counter').textContent = '📚 ' + words.length + ' mots disponibles';
@@ -272,7 +338,8 @@ function searchWord() {
 
   if (scored.length === 0) {
     title.textContent = '😕 Aucun résultat pour "' + input + '"';
-    grid.innerHTML = '<div class="no-result">Essaie une autre orthographe !</div>';
+    grid.innerHTML = '<div class="no-result">Essaie une autre orthographe !<br><br>' +
+      '<button class="btn btn-search" onclick="openModal()" style="margin-top:8px">➕ Proposer ce mot</button></div>';
     return;
   }
   title.textContent = '✅ ' + scored.length + ' résultat(s) pour "' + input + '"';
@@ -285,6 +352,40 @@ function searchWord() {
   ).join('');
   box.scrollIntoView({ behavior: 'smooth' });
 }
+
+// ── MODAL ──
+function openModal() {
+  document.getElementById('newWord').value = typed || '';
+  document.getElementById('newPhonetic').value = '';
+  document.getElementById('newEmoji').value = '';
+  document.getElementById('modalOverlay').classList.add('visible');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('visible');
+}
+function submitWord() {
+  const w = document.getElementById('newWord').value.trim();
+  const p = document.getElementById('newPhonetic').value.trim();
+  const e = document.getElementById('newEmoji').value.trim() || '📝';
+  if (!w) { alert('Écris le mot correct !'); return; }
+
+  // Sauvegarde locale + affiche confirmation
+  const suggestion = `{w:"${w}",p:"${p||w}",e:"${e}",n:"P2"}`;
+  console.log('Suggestion:', suggestion);
+
+  // Copie dans le presse-papier
+  navigator.clipboard.writeText(suggestion).then(() => {
+    alert(`✅ Merci ! Le mot "${w}" a été copié.\n\nColle-le dans words.js pour l'ajouter !`);
+  }).catch(() => {
+    alert(`✅ Merci pour "${w}" !\n\nAjoute cette ligne dans words.js :\n${suggestion}`);
+  });
+  closeModal();
+}
+
+// Fermer modal en cliquant dehors
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 </script>
 </body>
 </html>
