@@ -38,7 +38,7 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 .btn-clear  { background: #95a5a6; color: white; }
 .btn-add    { background: #f39c12; color: white; }
 @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-.mic-status { text-align: center; color: #e74c3c; font-size: 0.85em; margin-top: 8px; min-height: 20px; }
+.mic-status { text-align:center; color:#e74c3c; font-size:0.85em; margin-top:8px; min-height:20px; }
 .suggestions-box {
   background: white; border-radius: 15px;
   padding: 15px; margin-bottom: 15px;
@@ -60,7 +60,7 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 .card .em  { font-size: 2em; display: block; }
 .card .wrd { font-weight: bold; color: #2c3e50; font-size: 1em; margin-top: 4px; }
 .card .lvl { font-size: 0.7em; background: #3498db; color: white; border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 3px; }
-.no-result { text-align: center; color: #bdc3c7; padding: 20px; font-style: italic; }
+.no-result { text-align:center; color:#bdc3c7; padding:20px; font-style:italic; }
 .keyboard { background: #2c3e50; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
 .row { display: flex; justify-content: center; gap: 6px; margin-bottom: 6px; }
 .k {
@@ -74,9 +74,9 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 .k:active { transform: translateY(3px); box-shadow: 0 1px 0 #aaa; }
 .k.accent { background: #ffeaa7; font-size: 1.1em; }
 .k.accent:hover { background: #fdcb6e; color: #2c3e50; }
-.k.wide  { width: 100px; font-size: 1em; }
-.k.space { width: 280px; font-size: 0.85em; color: #888; background: #ecf0f1; }
-.counter { text-align: center; color: rgba(255,255,255,0.8); font-size: 0.85em; padding: 5px; }
+.k.wide   { width: 100px; font-size: 1em; }
+.k.space  { width: 280px; font-size: 0.85em; color: #888; background: #ecf0f1; }
+.counter  { text-align:center; color:rgba(255,255,255,0.8); font-size:0.85em; padding:5px; }
 .modal-bg {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,0.7); z-index: 999;
@@ -161,7 +161,7 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
       <button class="k" onclick="add('v')">V</button>
       <button class="k" onclick="add('b')">B</button>
       <button class="k" onclick="add('n')">N</button>
-      <button class="k wide" onclick="clearAll()">🗑️ Eff. tout</button>
+      <button class="k wide" onclick="clearAll()">🗑️ Eff.</button>
     </div>
     <div class="row">
       <button class="k accent" onclick="add('é')">É</button>
@@ -171,15 +171,16 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
       <button class="k accent" onclick="add('â')">Â</button>
       <button class="k accent" onclick="add('ù')">Ù</button>
       <button class="k accent" onclick="add('û')">Û</button>
-      <button class="k accent" onclick="add('ô')">Ô</button>
       <button class="k accent" onclick="add('î')">Î</button>
+      <button class="k accent" onclick="add('ô')">Ô</button>
       <button class="k accent" onclick="add('ç')">Ç</button>
     </div>
     <div class="row">
-      <button class="k space" onclick="add(' ')">espace</button>
+      <button class="k space" onclick="add(' ')">ESPACE</button>
     </div>
-    <div class="counter" id="counter">⏳ Chargement...</div>
   </div>
+
+  <div class="counter" id="counter">⏳ Chargement...</div>
 </div>
 
 <!-- MODAL VOIR UN MOT -->
@@ -199,31 +200,21 @@ h1 { text-align: center; color: white; padding: 15px; font-size: 1.4em; }
 <div class="modal-bg" id="modalAjout">
   <div class="modal-box">
     <h2>➕ Ajouter un mot</h2>
-    <input class="champ" id="aMot"   placeholder="Mot à ajouter (ex: papillon)" />
+    <input class="champ" id="aMot"   placeholder="Mot (ex: papillon)" />
     <input class="champ" id="aPhon"  placeholder="Comment ça sonne ? (ex: papion)" />
     <input class="champ" id="aEmoji" placeholder="Emoji (ex: 🦋)" />
-    <button class="btn btn-valider" onclick="validerAjout()">✅ Ajouter à ma liste</button>
+    <button class="btn btn-valider" onclick="validerAjout()">✅ Ajouter</button>
     <button class="btn btn-annuler" onclick="fermerAjout()">Annuler</button>
   </div>
 </div>
 
 <script>
 
-// ╔══════════════════════════════════════════════════════════╗
-// ║                                                          ║
-// ║   COLLEZ ICI LE CONTENU DE VOTRE words.js                ║
-// ║                                                          ║
-// ║   Le format attendu est :                                ║
-// ║   const words = [                                        ║
-// ║     {w:"bonjour", p:"bonjur", e:"👋", n:"P1"},           ║
-// ║     {w:"maison",  p:"mézon",  e:"🏠", n:"P1"},           ║
-// ║     ...                                                  ║
-// ║   ];                                                     ║
-// ║                                                          ║
-// ╚══════════════════════════════════════════════════════════╝
-
-const words = [
-  // ── A ──
+// ════════════════════════════════════════════════
+// LISTE DE MOTS — COLLEZ VOS MOTS ICI
+// ════════════════════════════════════════════════
+var words = [
+// ── A ──
 {w:"à",p:"a",e:"📍",n:"P1"},{w:"abord",p:"abor",e:"🚢",n:"P2"},
 {w:"absent",p:"absan",e:"❌",n:"P2"},{w:"accepter",p:"aksépté",e:"✅",n:"P2"},
 {w:"accident",p:"aksidan",e:"🚨",n:"P2"},{w:"accompagner",p:"akompanyé",e:"🤝",n:"P2"},
@@ -1187,24 +1178,34 @@ const words = [
 ];
 
 // ════════════════════════════════════════════════
-// NE PAS MODIFIER EN DESSOUS DE CETTE LIGNE
+// CONSTRUCTION DE LA BANQUE
 // ════════════════════════════════════════════════
+var banque = [];
 
-var banque = words.slice();
+// Ajout des mots de la liste
+for (var i = 0; i < words.length; i++) {
+  banque.push(words[i]);
+}
 
+// Ajout des mots personnels sauvegardés
 try {
   var extras = JSON.parse(localStorage.getItem('mots_extra') || '[]');
-  extras.forEach(function(m) { banque.push(m); });
+  for (var i = 0; i < extras.length; i++) { banque.push(extras[i]); }
 } catch(e) {}
 
-document.getElementById('counter').textContent =
-  '📚 ' + banque.length + ' mots disponibles ✅';
+document.getElementById('counter').textContent = '📚 ' + banque.length + ' mots disponibles';
 
-var typed = '';
+// ════════════════════════════════════════════════
+// ÉTAT
+// ════════════════════════════════════════════════
+var typed     = '';
 var motActuel = '';
-var micOn = false;
-var recog = null;
+var micOn     = false;
+var recog     = null;
 
+// ════════════════════════════════════════════════
+// ÉCRAN
+// ════════════════════════════════════════════════
 function updateScreen() {
   var s = document.getElementById('screen');
   s.innerHTML = typed
@@ -1212,9 +1213,12 @@ function updateScreen() {
     : '<span class="cursor">|</span>';
 }
 
-function add(l)      { typed += l;           updateScreen(); predire(); }
+// ════════════════════════════════════════════════
+// CLAVIER
+// ════════════════════════════════════════════════
+function add(l) { typed += l; updateScreen(); predire(); }
 function delLetter() { typed = typed.slice(0,-1); updateScreen(); predire(); }
-function clearAll()  { typed = '';           updateScreen(); predire(); }
+function clearAll()  { typed = ''; updateScreen(); predire(); }
 
 document.addEventListener('keydown', function(e) {
   if (document.querySelector('.modal-bg.open')) return;
@@ -1225,6 +1229,9 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
+// ════════════════════════════════════════════════
+// PHONÉTIQUE
+// ════════════════════════════════════════════════
 function norm(t) {
   if (!t) return '';
   return t.toLowerCase()
@@ -1245,12 +1252,12 @@ function scorer(saisie, mot) {
   var s  = norm(saisie);
   var mw = norm(mot.w || '');
   var mp = norm(mot.p || '');
-  if (mw === s)          return 100;
-  if (mw.startsWith(s))  return 90;
-  if (mp === s)          return 85;
-  if (mp.startsWith(s))  return 80;
-  if (mw.includes(s))    return 50;
-  if (mp.includes(s))    return 45;
+  if (mw === s)         return 100;
+  if (mw.startsWith(s)) return 90;
+  if (mp === s)         return 85;
+  if (mp.startsWith(s)) return 80;
+  if (mw.includes(s))   return 50;
+  if (mp.includes(s))   return 45;
   var c = 0;
   for (var i = 0; i < Math.min(s.length, mw.length); i++) {
     if (s[i] === mw[i]) c++; else break;
@@ -1259,6 +1266,9 @@ function scorer(saisie, mot) {
   return 0;
 }
 
+// ════════════════════════════════════════════════
+// PRÉDICTION
+// ════════════════════════════════════════════════
 function predire() {
   var titre = document.getElementById('sugTitre');
   var grid  = document.getElementById('sugGrid');
@@ -1295,6 +1305,9 @@ function predire() {
   grid.innerHTML = html;
 }
 
+// ════════════════════════════════════════════════
+// MODAL VOIR MOT
+// ════════════════════════════════════════════════
 function voirMot(mot, emoji, phon) {
   motActuel = mot;
   document.getElementById('mE').textContent = emoji;
@@ -1303,12 +1316,10 @@ function voirMot(mot, emoji, phon) {
   document.getElementById('modalMot').classList.add('open');
   setTimeout(ecouter, 400);
 }
-
 function fermerMot() {
   document.getElementById('modalMot').classList.remove('open');
   speechSynthesis.cancel();
 }
-
 function ecouter() {
   if (!motActuel) return;
   speechSynthesis.cancel();
@@ -1316,11 +1327,13 @@ function ecouter() {
   u.lang = 'fr-FR'; u.rate = 0.8;
   speechSynthesis.speak(u);
 }
-
 document.getElementById('modalMot').addEventListener('click', function(e) {
   if (e.target === this) fermerMot();
 });
 
+// ════════════════════════════════════════════════
+// MICROPHONE
+// ════════════════════════════════════════════════
 function toggleMic() {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { alert('Dictée vocale disponible uniquement sur Chrome ou Edge.'); return; }
@@ -1351,6 +1364,9 @@ function toggleMic() {
   recog.start();
 }
 
+// ════════════════════════════════════════════════
+// AJOUTER UN MOT
+// ════════════════════════════════════════════════
 function ouvrirAjout() {
   document.getElementById('aMot').value   = typed;
   document.getElementById('aPhon').value  = '';
@@ -1381,11 +1397,15 @@ function validerAjout() {
   fermerAjout();
   predire();
   document.getElementById('counter').textContent = '📚 ' + banque.length + ' mots disponibles';
-  alert('✅ "' + mot + '" ajouté à votre liste !');
+  alert('✅ "' + mot + '" ajouté !');
 }
 
+// ════════════════════════════════════════════════
+// DÉMARRAGE
+// ════════════════════════════════════════════════
 updateScreen();
 predire();
+
 </script>
 </body>
 </html>
