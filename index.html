@@ -3,28 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Clavier</title>
+<title>Clavier Prédictif</title>
 <style>
-body { font-family: Arial; background: #667eea; padding: 20px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial; background: #667eea; padding: 15px; min-height: 100vh; }
+
 #screen {
-  background: white; border-radius: 10px; padding: 20px;
-  font-size: 2em; text-align: center; min-height: 80px;
-  margin-bottom: 20px; letter-spacing: 5px;
+  background: white; border-radius: 12px; padding: 15px;
+  font-size: 2em; text-align: center; min-height: 70px;
+  margin-bottom: 10px; letter-spacing: 4px; color: #333;
 }
-.row { display: flex; justify-content: center; gap: 6px; margin-bottom: 6px; }
+
+#suggestions {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center; margin-bottom: 10px; min-height: 50px;
+}
+
+.suggestion {
+  background: white; border: none; border-radius: 20px;
+  padding: 8px 15px; font-size: 1.1em; cursor: pointer;
+  box-shadow: 0 3px 0 #aaa; transition: transform 0.1s;
+}
+.suggestion:active { transform: translateY(2px); box-shadow: 0 1px 0 #aaa; }
+
+#actions {
+  display: flex; gap: 8px; justify-content: center; margin-bottom: 10px;
+}
+#actions button {
+  padding: 10px 18px; border: none; border-radius: 20px;
+  font-size: 1em; cursor: pointer; font-weight: bold;
+}
+#btnMic { background: #ff6b6b; color: white; }
+#btnAdd { background: #51cf66; color: white; }
+
+.row { display: flex; justify-content: center; gap: 5px; margin-bottom: 5px; }
 .k {
-  width: 60px; height: 60px; font-size: 1.3em; font-weight: bold;
+  width: 55px; height: 55px; font-size: 1.2em; font-weight: bold;
   border: none; border-radius: 8px; background: white;
   cursor: pointer; box-shadow: 0 4px 0 #aaa;
 }
 .k:active { transform: translateY(3px); box-shadow: 0 1px 0 #aaa; }
-#status { color: white; text-align: center; font-size: 1.2em; margin-bottom: 15px; }
+.k-wide { width: 85px; font-size: 0.95em; }
+
+#msg { color: white; text-align: center; margin-top: 8px; font-size: 1em; min-height: 25px; }
 </style>
 </head>
 <body>
 
 <div id="screen">|</div>
-<div id="status">Cliquez une lettre ou tapez sur votre clavier !</div>
+
+<div id="suggestions"></div>
+
+<div id="actions">
+  <button id="btnMic" onclick="dicter()">🎤 Dicter</button>
+  <button id="btnAdd" onclick="ajouterMot()">➕ Ajouter</button>
+</div>
 
 <div class="row">
   <button class="k" onclick="add('a')">A</button>
@@ -51,47 +84,132 @@ body { font-family: Arial; background: #667eea; padding: 20px; }
   <button class="k" onclick="add('m')">M</button>
 </div>
 <div class="row">
-  <button class="k" onclick="del()" style="width:90px;font-size:1em">⌫ Eff</button>
+  <button class="k k-wide" onclick="del()">⌫ Eff</button>
   <button class="k" onclick="add('w')">W</button>
   <button class="k" onclick="add('x')">X</button>
   <button class="k" onclick="add('c')">C</button>
   <button class="k" onclick="add('v')">V</button>
   <button class="k" onclick="add('b')">B</button>
   <button class="k" onclick="add('n')">N</button>
-  <button class="k" onclick="clear2()" style="width:90px;font-size:0.9em">🗑️ Tout</button>
+  <button class="k k-wide" onclick="clear2()">🗑️ Tout</button>
 </div>
 
+<div id="msg"></div>
+
 <script>
+// ==============================
+// 📚 LISTE DE MOTS — remplacez ici !
+// Format : { mot: "pantalon", emoji: "👖" }
+// ==============================
+var mots = [
+  { mot: "pantalon", emoji: "👖" },
+  { mot: "papillon", emoji: "🦋" },
+  { mot: "pomme",    emoji: "🍎" },
+  { mot: "poisson",  emoji: "🐟" },
+  { mot: "maison",   emoji: "🏠" }
+];
+
+// Mots ajoutés par l'élève (sauvegardés)
+var motsAjoutes = JSON.parse(localStorage.getItem('motsAjoutes') || '[]');
+var tousLesMots = mots.concat(motsAjoutes);
+
 var typed = '';
 
 function add(l) {
   typed += l;
-  document.getElementById('screen').textContent = typed || '|';
-  document.getElementById('status').textContent = 'Tapé : ' + typed;
+  maj();
 }
 
 function del() {
   typed = typed.slice(0, -1);
-  document.getElementById('screen').textContent = typed || '|';
-  document.getElementById('status').textContent = 'Tapé : ' + typed;
+  maj();
 }
 
 function clear2() {
   typed = '';
-  document.getElementById('screen').textContent = '|';
-  document.getElementById('status').textContent = 'Effacé !';
+  maj();
 }
 
-// ✅ CLAVIER PHYSIQUE
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Backspace') {
-    e.preventDefault();
-    del();
-  } else if (e.key === 'Escape') {
-    clear2();
-  } else if (/^[a-zA-ZàâäéèêëîïôùûüçÀÂÄÉÈÊËÎÏÔÙÛÜÇ]$/.test(e.key)) {
-    add(e.key.toLowerCase());
+function maj() {
+  document.getElementById('screen').textContent = typed || '|';
+  afficherSuggestions();
+}
+
+function afficherSuggestions() {
+  var div = document.getElementById('suggestions');
+  div.innerHTML = '';
+  if (typed.length === 0) return;
+
+  var t = typed.toLowerCase();
+  var resultats = tousLesMots.filter(function(w) {
+    return w.mot.toLowerCase().startsWith(t);
+  }).slice(0, 8);
+
+  if (resultats.length === 0) {
+    div.innerHTML = '<span style="color:white;font-size:0.9em">Aucun mot trouvé — utilisez ➕ pour ajouter</span>';
+    return;
   }
+
+  resultats.forEach(function(w) {
+    var btn = document.createElement('button');
+    btn.className = 'suggestion';
+    btn.textContent = w.emoji + ' ' + w.mot;
+    btn.onclick = function() {
+      typed = w.mot;
+      maj();
+      parler(w.mot);
+      document.getElementById('msg').textContent = '✅ ' + w.mot;
+    };
+    div.appendChild(btn);
+  });
+}
+
+function parler(texte) {
+  if ('speechSynthesis' in window) {
+    var u = new SpeechSynthesisUtterance(texte);
+    u.lang = 'fr-FR';
+    speechSynthesis.speak(u);
+  }
+}
+
+function dicter() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    document.getElementById('msg').textContent = '❌ Micro non supporté sur ce navigateur';
+    return;
+  }
+  var R = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var r = new R();
+  r.lang = 'fr-FR';
+  r.onstart = function() { document.getElementById('msg').textContent = '🎤 Parlez...'; };
+  r.onresult = function(e) {
+    typed = e.results[0][0].transcript.toLowerCase().replace(/\s+/g,'');
+    maj();
+    document.getElementById('msg').textContent = '✅ Entendu : ' + typed;
+  };
+  r.onerror = function() { document.getElementById('msg').textContent = '❌ Erreur micro'; };
+  r.start();
+}
+
+function ajouterMot() {
+  if (typed.length === 0) {
+    document.getElementById('msg').textContent = '⚠️ Tapez un mot d\'abord';
+    return;
+  }
+  var emoji = prompt('Quel emoji pour "' + typed + '" ?', '📝');
+  if (emoji === null) return;
+  var nouveau = { mot: typed, emoji: emoji || '📝' };
+  motsAjoutes.push(nouveau);
+  tousLesMots.push(nouveau);
+  localStorage.setItem('motsAjoutes', JSON.stringify(motsAjoutes));
+  document.getElementById('msg').textContent = '✅ "' + typed + '" ajouté !';
+  afficherSuggestions();
+}
+
+// Clavier physique
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Backspace') { e.preventDefault(); del(); }
+  else if (e.key === 'Escape') { clear2(); }
+  else if (/^[a-zA-ZàâäéèêëîïôùûüçÀÂÄÉÈÊËÎÏÔÙÛÜÇ]$/.test(e.key)) { add(e.key.toLowerCase()); }
 });
 </script>
 </body>
