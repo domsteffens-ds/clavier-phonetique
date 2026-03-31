@@ -51,7 +51,6 @@ body { font-family: Arial; background: #667eea; padding: 15px; min-height: 100vh
 <body>
 
 <div id="screen">|</div>
-
 <div id="suggestions"></div>
 
 <div id="actions">
@@ -97,19 +96,320 @@ body { font-family: Arial; background: #667eea; padding: 15px; min-height: 100vh
 <div id="msg"></div>
 
 <script>
-// ==============================
-// 📚 LISTE DE MOTS — remplacez ici !
-// Format : { mot: "pantalon", emoji: "👖" }
-// ==============================
-var mots = [
-  { mot: "pantalon", emoji: "👖" },
-  { mot: "papillon", emoji: "🦋" },
-  { mot: "pomme",    emoji: "🍎" },
-  { mot: "poisson",  emoji: "🐟" },
-  { mot: "maison",   emoji: "🏠" }
+const mots = [
+// ── A ──
+{w:"à",p:"a",e:"📍",n:"P1"},{w:"abord",p:"abor",e:"🚢",n:"P2"},
+{w:"absent",p:"absan",e:"❌",n:"P2"},{w:"accepter",p:"aksépté",e:"✅",n:"P2"},
+{w:"accident",p:"aksidan",e:"🚨",n:"P2"},{w:"accompagner",p:"akompanyé",e:"🤝",n:"P2"},
+{w:"accord",p:"akor",e:"✅",n:"P1"},{w:"acheter",p:"ashté",e:"🛒",n:"P1"},
+{w:"action",p:"aksion",e:"⚡",n:"P2"},{w:"adresse",p:"adrès",e:"📍",n:"P1"},
+{w:"adulte",p:"adult",e:"👨",n:"P2"},{w:"affaire",p:"afèr",e:"💼",n:"P2"},
+{w:"âge",p:"aj",e:"🎂",n:"P1"},{w:"aider",p:"èdé",e:"🤝",n:"P1"},
+{w:"aimer",p:"èmé",e:"❤️",n:"P1"},{w:"air",p:"èr",e:"💨",n:"P1"},
+{w:"aller",p:"alé",e:"🚶",n:"P1"},{w:"allumer",p:"alumé",e:"💡",n:"P2"},
+{w:"alors",p:"alor",e:"➡️",n:"P1"},{w:"ami",p:"ami",e:"👫",n:"P1"},
+{w:"amour",p:"amur",e:"❤️",n:"P1"},{w:"an",p:"an",e:"📅",n:"P1"},
+{w:"animal",p:"animal",e:"🐾",n:"P1"},{w:"année",p:"ané",e:"📅",n:"P1"},
+{w:"appeler",p:"aplé",e:"📞",n:"P1"},{w:"apporter",p:"aporté",e:"🎁",n:"P2"},
+{w:"apprendre",p:"aprandr",e:"📚",n:"P1"},{w:"après",p:"aprè",e:"⏩",n:"P1"},
+{w:"argent",p:"arjan",e:"💰",n:"P1"},{w:"arrêter",p:"arèté",e:"🛑",n:"P1"},
+{w:"arriver",p:"arivé",e:"🏁",n:"P1"},{w:"asseoir",p:"aswar",e:"🪑",n:"P2"},
+{w:"attendre",p:"atandr",e:"⏳",n:"P1"},{w:"aujourd'hui",p:"ojordui",e:"📅",n:"P1"},
+{w:"aussi",p:"osi",e:"➕",n:"P1"},{w:"autre",p:"otr",e:"🔄",n:"P1"},
+{w:"avancer",p:"avansé",e:"➡️",n:"P2"},{w:"avant",p:"avan",e:"⏮️",n:"P1"},
+{w:"avec",p:"avèk",e:"🤝",n:"P1"},{w:"avion",p:"avion",e:"✈️",n:"P1"},
+{w:"avoir",p:"avwar",e:"✋",n:"P1"},
+// ── B ──
+{w:"beau",p:"bo",e:"😍",n:"P1"},{w:"beaucoup",p:"boku",e:"📊",n:"P1"},
+{w:"bébé",p:"bébé",e:"👶",n:"P1"},{w:"besoin",p:"bzwin",e:"🙏",n:"P1"},
+{w:"bien",p:"byin",e:"✅",n:"P1"},{w:"blanc",p:"blan",e:"⬜",n:"P1"},
+{w:"bleu",p:"bleu",e:"🔵",n:"P1"},{w:"boire",p:"bwar",e:"🥤",n:"P1"},
+{w:"bonjour",p:"bonjur",e:"👋",n:"P1"},{w:"bonsoir",p:"bonswar",e:"🌙",n:"P1"},
+{w:"bouche",p:"bush",e:"👄",n:"P1"},{w:"bout",p:"bu",e:"🔚",n:"P2"},
+{w:"bras",p:"bra",e:"💪",n:"P1"},{w:"bruits",p:"brui",e:"🔊",n:"P2"},
+{w:"bureau",p:"buró",e:"🖥️",n:"P1"},
+// ── C ──
+{w:"ça",p:"sa",e:"👇",n:"P1"},{w:"cadeau",p:"kado",e:"🎁",n:"P1"},
+{w:"café",p:"kafé",e:"☕",n:"P1"},{w:"calme",p:"kalm",e:"😌",n:"P1"},
+{w:"camion",p:"kamion",e:"🚛",n:"P1"},{w:"carte",p:"kart",e:"🗺️",n:"P1"},
+{w:"carotte",p:"karot",e:"🥕",n:"P1"},{w:"casque",p:"kask",e:"⛑️",n:"P2"},
+{w:"ce",p:"se",e:"👇",n:"P1"},{w:"cela",p:"sla",e:"👇",n:"P1"},
+{w:"celui",p:"slui",e:"👤",n:"P2"},{w:"cent",p:"san",e:"💯",n:"P1"},
+{w:"cerise",p:"seriz",e:"🍒",n:"P2"},{w:"chaise",p:"shèz",e:"🪑",n:"P1"},
+{w:"chambre",p:"shambr",e:"🛏️",n:"P1"},{w:"chance",p:"shans",e:"🍀",n:"P1"},
+{w:"changer",p:"shanjé",e:"🔄",n:"P1"},{w:"chanson",p:"shanson",e:"🎵",n:"P1"},
+{w:"chanter",p:"shanté",e:"🎤",n:"P1"},{w:"chapeau",p:"shapo",e:"🎩",n:"P1"},
+{w:"chaque",p:"shak",e:"🔢",n:"P2"},{w:"chat",p:"sha",e:"🐱",n:"P1"},
+{w:"chaud",p:"sho",e:"🌡️",n:"P1"},{w:"chaussette",p:"shosèt",e:"🧦",n:"P1"},
+{w:"chaussure",p:"shosyr",e:"👟",n:"P1"},{w:"chemin",p:"shmin",e:"🛣️",n:"P1"},
+{w:"chercher",p:"shèrshé",e:"🔍",n:"P1"},{w:"cheval",p:"shval",e:"🐴",n:"P1"},
+{w:"cheveux",p:"shveu",e:"💇",n:"P1"},{w:"chien",p:"shyin",e:"🐶",n:"P1"},
+{w:"chocolat",p:"shokola",e:"🍫",n:"P1"},{w:"chose",p:"shoz",e:"📦",n:"P1"},
+{w:"ciel",p:"syèl",e:"🌤️",n:"P1"},{w:"cinq",p:"sink",e:"5️⃣",n:"P1"},
+{w:"citron",p:"sitron",e:"🍋",n:"P1"},{w:"classe",p:"klas",e:"🏫",n:"P1"},
+{w:"clé",p:"klé",e:"🔑",n:"P1"},{w:"cochon",p:"koshon",e:"🐷",n:"P1"},
+{w:"coeur",p:"keur",e:"❤️",n:"P1"},{w:"colère",p:"kolèr",e:"😠",n:"P2"},
+{w:"commencer",p:"komansé",e:"▶️",n:"P1"},{w:"comment",p:"koman",e:"❓",n:"P1"},
+{w:"comprendre",p:"komprandr",e:"🧠",n:"P1"},{w:"compter",p:"konté",e:"🔢",n:"P1"},
+{w:"connaître",p:"konètr",e:"🧠",n:"P1"},{w:"content",p:"kontan",e:"😊",n:"P1"},
+{w:"continuer",p:"kontinué",e:"▶️",n:"P2"},{w:"coucher",p:"kushé",e:"🛏️",n:"P1"},
+{w:"couleur",p:"kuleur",e:"🎨",n:"P1"},{w:"courir",p:"kurir",e:"🏃",n:"P1"},
+{w:"crayon",p:"krèyon",e:"✏️",n:"P1"},{w:"crier",p:"kriyé",e:"📢",n:"P1"},
+{w:"cuisine",p:"kuizin",e:"🍳",n:"P1"},
+// ── D ──
+{w:"d'accord",p:"dakor",e:"✅",n:"P1"},{w:"dans",p:"dan",e:"📦",n:"P1"},
+{w:"danser",p:"dansé",e:"💃",n:"P1"},{w:"de",p:"de",e:"📌",n:"P1"},
+{w:"debout",p:"debu",e:"🧍",n:"P1"},{w:"décider",p:"désidé",e:"✅",n:"P2"},
+{w:"dehors",p:"deor",e:"🌳",n:"P1"},{w:"déjà",p:"déja",e:"✅",n:"P1"},
+{w:"demain",p:"dmin",e:"📅",n:"P1"},{w:"demander",p:"dmandé",e:"🙋",n:"P1"},
+{w:"dent",p:"dan",e:"🦷",n:"P1"},{w:"depuis",p:"depui",e:"⏮️",n:"P2"},
+{w:"derrière",p:"dèryèr",e:"↩️",n:"P1"},{w:"descendre",p:"desandr",e:"⬇️",n:"P1"},
+{w:"difficile",p:"difisil",e:"😓",n:"P1"},{w:"dormir",p:"dormir",e:"😴",n:"P1"},
+{w:"droite",p:"drwat",e:"➡️",n:"P1"},{w:"dur",p:"dyr",e:"💪",n:"P1"},
+// ── E ──
+{w:"eau",p:"o",e:"💧",n:"P1"},{w:"école",p:"ékol",e:"🏫",n:"P1"},
+{w:"écouter",p:"ékuté",e:"👂",n:"P1"},{w:"écrire",p:"ékrir",e:"✏️",n:"P1"},
+{w:"enfant",p:"anfan",e:"👶",n:"P1"},{w:"ensemble",p:"ansanbl",e:"👥",n:"P1"},
+{w:"entendre",p:"antandr",e:"👂",n:"P1"},{w:"entre",p:"antr",e:"↔️",n:"P1"},
+{w:"envie",p:"anvi",e:"🙏",n:"P1"},{w:"erreur",p:"èreur",e:"❌",n:"P2"},
+{w:"essayer",p:"èsayé",e:"🔄",n:"P1"},{w:"être",p:"ètr",e:"🧍",n:"P1"},
+// ── F ──
+{w:"facile",p:"fasil",e:"😊",n:"P1"},{w:"faire",p:"fèr",e:"✋",n:"P1"},
+{w:"famille",p:"famiy",e:"👨‍👩‍👧",n:"P1"},{w:"fatigue",p:"fatig",e:"😴",n:"P1"},
+{w:"fête",p:"fèt",e:"🎉",n:"P1"},{w:"fille",p:"fiy",e:"👧",n:"P1"},
+{w:"finir",p:"finir",e:"🏁",n:"P1"},{w:"fleur",p:"fleur",e:"🌸",n:"P1"},
+{w:"forêt",p:"forè",e:"🌲",n:"P1"},{w:"fort",p:"for",e:"💪",n:"P1"},
+{w:"frère",p:"frèr",e:"👦",n:"P1"},{w:"froid",p:"frwa",e:"❄️",n:"P1"},
+{w:"fruit",p:"frwi",e:"🍎",n:"P1"},
+// ── G ──
+{w:"gagner",p:"ganyé",e:"🏆",n:"P1"},{w:"garçon",p:"garson",e:"👦",n:"P1"},
+{w:"gauche",p:"gosh",e:"⬅️",n:"P1"},{w:"grand",p:"gran",e:"📏",n:"P1"},
+{w:"grave",p:"grav",e:"⚠️",n:"P2"},{w:"groupe",p:"grup",e:"👥",n:"P2"},
+// ── H ──
+{w:"herbe",p:"èrb",e:"🌿",n:"P1"},{w:"heure",p:"eur",e:"⏰",n:"P1"},
+{w:"histoire",p:"istwar",e:"📖",n:"P1"},{w:"hiver",p:"ivèr",e:"❄️",n:"P1"},
+// ── I ──
+{w:"ici",p:"isi",e:"📍",n:"P1"},{w:"image",p:"imaj",e:"🖼️",n:"P1"},
+{w:"important",p:"importan",e:"❗",n:"P1"},
+// ── J ──
+{w:"jambe",p:"jamb",e:"🦵",n:"P1"},{w:"jardin",p:"jardin",e:"🌻",n:"P1"},
+{w:"jeune",p:"jeun",e:"🧒",n:"P1"},{w:"joie",p:"jwa",e:"😄",n:"P1"},
+{w:"jouer",p:"jué",e:"🎮",n:"P1"},{w:"jour",p:"jur",e:"☀️",n:"P1"},
+{w:"juste",p:"just",e:"✅",n:"P1"},
+// ── L ──
+{w:"là",p:"la",e:"📍",n:"P1"},{w:"laisser",p:"lèsé",e:"✋",n:"P1"},
+{w:"langue",p:"lang",e:"👅",n:"P1"},{w:"lapin",p:"lapin",e:"🐰",n:"P1"},
+{w:"légume",p:"légym",e:"🥦",n:"P1"},{w:"lettre",p:"lètr",e:"✉️",n:"P1"},
+{w:"lever",p:"levé",e:"⬆️",n:"P1"},{w:"lion",p:"lion",e:"🦁",n:"P1"},
+{w:"lire",p:"lir",e:"📖",n:"P1"},{w:"lit",p:"li",e:"🛏️",n:"P1"},
+{w:"livre",p:"livr",e:"📚",n:"P1"},{w:"loin",p:"lwin",e:"🔭",n:"P1"},
+{w:"long",p:"lon",e:"📏",n:"P1"},{w:"lumière",p:"lumyèr",e:"💡",n:"P1"},
+{w:"lune",p:"lun",e:"🌙",n:"P1"},
+// ── M ──
+{w:"magasin",p:"magazin",e:"🏪",n:"P1"},{w:"main",p:"min",e:"✋",n:"P1"},
+{w:"maison",p:"mèzon",e:"🏠",n:"P1"},{w:"malade",p:"malad",e:"🤒",n:"P1"},
+{w:"manger",p:"manjé",e:"🍽️",n:"P1"},{w:"marché",p:"marshé",e:"🛒",n:"P1"},
+{w:"marcher",p:"marshé",e:"🚶",n:"P1"},{w:"matin",p:"matin",e:"🌅",n:"P1"},
+{w:"mauvais",p:"movè",e:"👎",n:"P1"},{w:"même",p:"mèm",e:"🔄",n:"P1"},
+{w:"mer",p:"mèr",e:"🌊",n:"P1"},{w:"merci",p:"mèrsi",e:"🙏",n:"P1"},
+{w:"mère",p:"mèr",e:"👩",n:"P1"},{w:"message",p:"mèsaj",e:"📩",n:"P1"},
+{w:"mettre",p:"mètr",e:"📥",n:"P1"},{w:"midi",p:"midi",e:"☀️",n:"P1"},
+{w:"mieux",p:"myeu",e:"⬆️",n:"P1"},{w:"minute",p:"minut",e:"⏱️",n:"P1"},
+{w:"moi",p:"mwa",e:"👤",n:"P1"},{w:"monde",p:"mond",e:"🌍",n:"P1"},
+{w:"montagne",p:"montany",e:"⛰️",n:"P1"},{w:"monter",p:"monté",e:"⬆️",n:"P1"},
+{w:"montrer",p:"montré",e:"👆",n:"P1"},{w:"mot",p:"mo",e:"💬",n:"P1"},
+{w:"mouton",p:"muton",e:"🐑",n:"P1"},{w:"musique",p:"muzik",e:"🎵",n:"P1"},
+// ── N ──
+{w:"nager",p:"najé",e:"🏊",n:"P1"},{w:"nature",p:"natur",e:"🌿",n:"P1"},
+{w:"neige",p:"nèj",e:"❄️",n:"P1"},{w:"nom",p:"non",e:"📛",n:"P1"},
+{w:"non",p:"non",e:"❌",n:"P1"},{w:"nouveau",p:"nuvo",e:"🆕",n:"P1"},
+{w:"nous",p:"nu",e:"👥",n:"P1"},{w:"nuit",p:"nui",e:"🌙",n:"P1"},
+{w:"nuage",p:"nuaj",e:"☁️",n:"P1"},
+// ── O ──
+{w:"ou",p:"u",e:"🔀",n:"P1"},{w:"où",p:"u",e:"📍",n:"P1"},
+{w:"oublier",p:"ublié",e:"💭",n:"P1"},{w:"ouvrir",p:"uvrir",e:"🔓",n:"P1"},
+// ── P ──
+{w:"page",p:"paj",e:"📄",n:"P1"},{w:"pain",p:"pin",e:"🍞",n:"P1"},
+{w:"papa",p:"papa",e:"👨",n:"P1"},{w:"parce que",p:"parsk",e:"❓",n:"P1"},
+{w:"parler",p:"parlé",e:"💬",n:"P1"},{w:"partir",p:"partir",e:"🚪",n:"P1"},
+{w:"passer",p:"pasé",e:"➡️",n:"P1"},{w:"père",p:"pèr",e:"👨",n:"P1"},
+{w:"petit",p:"peti",e:"🔹",n:"P1"},{w:"peur",p:"peur",e:"😱",n:"P1"},
+{w:"peut-être",p:"peutètr",e:"🤔",n:"P1"},{w:"pied",p:"pyé",e:"🦶",n:"P1"},
+{w:"pleuvoir",p:"pluvwar",e:"🌧️",n:"P1"},{w:"plus",p:"plu",e:"➕",n:"P1"},
+{w:"poisson",p:"pwason",e:"🐟",n:"P1"},{w:"pomme",p:"pom",e:"🍎",n:"P1"},
+{w:"porte",p:"port",e:"🚪",n:"P1"},{w:"poulet",p:"pulè",e:"🍗",n:"P1"},
+{w:"pour",p:"pur",e:"🎯",n:"P1"},{w:"pourquoi",p:"purkwa",e:"❓",n:"P1"},
+{w:"pouvoir",p:"puvwar",e:"💪",n:"P1"},{w:"premier",p:"premyé",e:"🥇",n:"P1"},
+{w:"prendre",p:"prandr",e:"✋",n:"P1"},{w:"propre",p:"propr",e:"🧹",n:"P1"},
+// ── Q ──
+{w:"quand",p:"kan",e:"⏰",n:"P1"},{w:"que",p:"ke",e:"❓",n:"P1"},
+{w:"quel",p:"kèl",e:"❓",n:"P1"},{w:"question",p:"kèstion",e:"❓",n:"P1"},
+{w:"qui",p:"ki",e:"👤",n:"P1"},
+// ── R ──
+{w:"regarder",p:"regardé",e:"👀",n:"P1"},{w:"rentrer",p:"rantré",e:"🏠",n:"P1"},
+{w:"répondre",p:"répondr",e:"↩️",n:"P1"},{w:"rester",p:"rèsté",e:"🧍",n:"P1"},
+{w:"rire",p:"rir",e:"😂",n:"P1"},{w:"rouge",p:"ruj",e:"🔴",n:"P1"},
+{w:"rue",p:"ru",e:"🛣️",n:"P1"},
+// ── S ──
+{w:"savoir",p:"savwar",e:"🧠",n:"P1"},{w:"sentir",p:"santir",e:"👃",n:"P1"},
+{w:"seul",p:"seul",e:"👤",n:"P1"},{w:"si",p:"si",e:"❓",n:"P1"},
+{w:"sœur",p:"seur",e:"👧",n:"P1"},{w:"soleil",p:"solèy",e:"☀️",n:"P1"},
+{w:"sommeil",p:"somèy",e:"😴",n:"P1"},{w:"sortir",p:"sortir",e:"🚪",n:"P1"},
+{w:"sourire",p:"surir",e:"😊",n:"P1"},{w:"sous",p:"su",e:"⬇️",n:"P1"},
+{w:"souvent",p:"suvan",e:"🔄",n:"P1"},{w:"sport",p:"spor",e:"⚽",n:"P1"},
+{w:"stylo",p:"stilo",e:"🖊️",n:"P1"},{w:"sur",p:"sur",e:"⬆️",n:"P1"},
+// ── T ──
+{w:"table",p:"tabl",e:"🪑",n:"P1"},{w:"tard",p:"tar",e:"🌙",n:"P1"},
+{w:"temps",p:"tan",e:"⏰",n:"P1"},{w:"terre",p:"tèr",e:"🌍",n:"P1"},
+{w:"tête",p:"tèt",e:"👤",n:"P1"},{w:"tomate",p:"tomat",e:"🍅",n:"P1"},
+{w:"tomber",p:"tombé",e:"⬇️",n:"P1"},{w:"toujours",p:"tojur",e:"🔄",n:"P1"},
+{w:"tout",p:"tu",e:"⭕",n:"P1"},{w:"train",p:"trin",e:"🚂",n:"P1"},
+{w:"très",p:"trè",e:"⬆️",n:"P1"},{w:"triste",p:"trist",e:"😢",n:"P1"},
+{w:"trois",p:"trwa",e:"3️⃣",n:"P1"},{w:"trop",p:"tro",e:"📊",n:"P1"},
+{w:"trouver",p:"trouvé",e:"🔍",n:"P1"},{w:"tu",p:"tu",e:"👤",n:"P1"},
+// ── U ──
+{w:"un",p:"un",e:"1️⃣",n:"P1"},{w:"utile",p:"util",e:"🔧",n:"P2"},
+{w:"utiliser",p:"utilizé",e:"🔧",n:"P2"},
+// ── V ──
+{w:"vacances",p:"vakans",e:"🏖️",n:"P1"},{w:"venir",p:"vnir",e:"🚶",n:"P1"},
+{w:"vent",p:"van",e:"💨",n:"P1"},{w:"verre",p:"vèr",e:"🥛",n:"P1"},
+{w:"vert",p:"vèr",e:"🟢",n:"P1"},{w:"vêtement",p:"vètman",e:"👕",n:"P1"},
+{w:"vie",p:"vi",e:"💚",n:"P1"},{w:"vieux",p:"vyeu",e:"👴",n:"P1"},
+{w:"ville",p:"vil",e:"🏙️",n:"P1"},{w:"vite",p:"vit",e:"⚡",n:"P1"},
+{w:"voir",p:"vwar",e:"👀",n:"P1"},{w:"voiture",p:"vwatur",e:"🚗",n:"P1"},
+{w:"vous",p:"vu",e:"👥",n:"P1"},{w:"vrai",p:"vrè",e:"✅",n:"P1"},
+// ── Y Z ──
+{w:"yeux",p:"yeu",e:"👀",n:"P1"},{w:"zéro",p:"zéro",e:"0️⃣",n:"P1"},
+// ── P2 ──
+{w:"abandonner",p:"abandoané",e:"🚪",n:"P3"},{w:"abîmer",p:"abimé",e:"💔",n:"P3"},
+{w:"absence",p:"absans",e:"❌",n:"P3"},{w:"accès",p:"aksè",e:"🔑",n:"P3"},
+{w:"accueillir",p:"akœyir",e:"🤗",n:"P3"},{w:"acteur",p:"akteur",e:"🎭",n:"P2"},
+{w:"adapter",p:"adapté",e:"🔧",n:"P3"},{w:"agenda",p:"ajenda",e:"📅",n:"P2"},
+{w:"agréable",p:"agréabl",e:"😊",n:"P2"},{w:"aile",p:"èl",e:"🦅",n:"P2"},
+{w:"aliment",p:"aliman",e:"🍽️",n:"P2"},{w:"amical",p:"amikal",e:"😊",n:"P2"},
+{w:"ancien",p:"ansyin",e:"🏛️",n:"P2"},{w:"animal",p:"animal",e:"🐾",n:"P1"},
+{w:"bord",p:"bor",e:"📐",n:"P2"},{w:"bouger",p:"bujé",e:"🏃",n:"P2"},
+{w:"bouteille",p:"butèy",e:"🍾",n:"P2"},{w:"briller",p:"briyé",e:"✨",n:"P2"},
+{w:"brosse",p:"bros",e:"🪥",n:"P2"},{w:"brûler",p:"brulé",e:"🔥",n:"P2"},
+{w:"cacher",p:"kashé",e:"🙈",n:"P2"},{w:"calculer",p:"kalkulé",e:"🧮",n:"P2"},
+{w:"calendrier",p:"kalangdriyé",e:"📅",n:"P2"},{w:"camarade",p:"kamarad",e:"👫",n:"P2"},
+{w:"capable",p:"kapabl",e:"💪",n:"P2"},{w:"caverne",p:"kavèrn",e:"🏔️",n:"P3"},
+{w:"ceinture",p:"sèntyr",e:"👖",n:"P2"},{w:"cerveau",p:"sèrvo",e:"🧠",n:"P2"},
+{w:"chaleur",p:"shaleur",e:"☀️",n:"P2"},{w:"championnat",p:"shampiona",e:"🏆",n:"P2"},
+{w:"charger",p:"sharjé",e:"🔌",n:"P2"},{w:"château",p:"shato",e:"🏰",n:"P2"},
+{w:"chemise",p:"shemiz",e:"👔",n:"P2"},{w:"chèvre",p:"shèvr",e:"🐐",n:"P2"},
+{w:"chiffre",p:"shifr",e:"🔢",n:"P2"},{w:"choisir",p:"shwazir",e:"✅",n:"P2"},
+{w:"choix",p:"shwa",e:"🔀",n:"P2"},{w:"chou",p:"shu",e:"🥦",n:"P2"},
+{w:"chouette",p:"shwèt",e:"🦉",n:"P2"},{w:"clair",p:"klèr",e:"💡",n:"P2"},
+{w:"client",p:"klyan",e:"👤",n:"P2"},{w:"coiffer",p:"kwafé",e:"💇",n:"P3"},
+{w:"colline",p:"kolin",e:"⛰️",n:"P2"},{w:"combat",p:"komba",e:"⚔️",n:"P2"},
+{w:"compas",p:"kompas",e:"🧭",n:"P2"},{w:"concours",p:"konkur",e:"🏆",n:"P2"},
+{w:"confiance",p:"konfyans",e:"🤝",n:"P2"},{w:"conseil",p:"konsèy",e:"💡",n:"P2"},
+{w:"courageux",p:"kurajeu",e:"💪",n:"P2"},{w:"curieux",p:"kuryeu",e:"🤔",n:"P2"},
+{w:"dangereux",p:"danjèreu",e:"⚠️",n:"P2"},{w:"différent",p:"différan",e:"🔄",n:"P2"},
+{w:"doux",p:"du",e:"🤗",n:"P2"},{w:"énorme",p:"énorm",e:"📏",n:"P2"},
+{w:"épais",p:"épè",e:"📏",n:"P2"},{w:"étrange",p:"étranj",e:"🤔",n:"P2"},
+{w:"excellent",p:"éksèlan",e:"⭐",n:"P2"},{w:"faible",p:"fèbl",e:"😔",n:"P2"},
+{w:"grippe",p:"grip",e:"🤒",n:"P2"},{w:"grotte",p:"grot",e:"🏔️",n:"P2"},
+{w:"guerre",p:"gèr",e:"⚔️",n:"P2"},{w:"guide",p:"gid",e:"🗺️",n:"P2"},
+{w:"haricot",p:"ariko",e:"🫘",n:"P2"},{w:"hibou",p:"ibu",e:"🦉",n:"P2"},
+{w:"hippopotame",p:"ipopotam",e:"🦛",n:"P2"},{w:"honte",p:"ont",e:"😳",n:"P2"},
+{w:"horizon",p:"orizon",e:"🌅",n:"P2"},{w:"horloge",p:"orloj",e:"⏰",n:"P2"},
+{w:"huile",p:"wil",e:"🫙",n:"P2"},{w:"humeur",p:"ymeur",e:"😊",n:"P2"},
+{w:"île",p:"il",e:"🏝️",n:"P2"},{w:"imprimante",p:"imprimant",e:"🖨️",n:"P2"},
+{w:"infirmier",p:"infirmyé",e:"👨‍⚕️",n:"P2"},{w:"insecte",p:"insèkt",e:"🐛",n:"P2"},
+{w:"internet",p:"intèrnèt",e:"🌐",n:"P2"},{w:"invitation",p:"invitasion",e:"💌",n:"P2"},
+{w:"jet",p:"jèt",e:"💦",n:"P2"},{w:"jeunesse",p:"jeunès",e:"👦",n:"P2"},
+{w:"journal",p:"jurnal",e:"📰",n:"P2"},{w:"jungle",p:"jungl",e:"🌴",n:"P2"},
+{w:"lac",p:"lak",e:"🌊",n:"P2"},{w:"lait",p:"lè",e:"🥛",n:"P1"},
+{w:"lampe",p:"lamp",e:"💡",n:"P1"},{w:"lavabo",p:"lavabo",e:"🚿",n:"P2"},
+{w:"lèvre",p:"lèvr",e:"💋",n:"P2"},{w:"liberté",p:"libèrté",e:"🕊️",n:"P2"},
+{w:"liste",p:"list",e:"📋",n:"P2"},{w:"loi",p:"lwa",e:"⚖️",n:"P2"},
+{w:"lutte",p:"lyt",e:"💪",n:"P3"},{w:"maïs",p:"mais",e:"🌽",n:"P1"},
+{w:"maladie",p:"maladi",e:"💊",n:"P2"},{w:"manche",p:"mansh",e:"👕",n:"P2"},
+{w:"marteau",p:"marto",e:"🔨",n:"P2"},{w:"masque",p:"mask",e:"😷",n:"P2"},
+{w:"médicament",p:"médikaman",e:"💊",n:"P2"},{w:"mémoire",p:"mémwar",e:"🧠",n:"P2"},
+{w:"métal",p:"métal",e:"⚙️",n:"P3"},{w:"miroir",p:"mirwar",e:"🪞",n:"P2"},
+{w:"mode",p:"mod",e:"👗",n:"P2"},{w:"monument",p:"monyman",e:"🏛️",n:"P2"},
+{w:"mosquée",p:"mosské",e:"🕌",n:"P2"},{w:"mouche",p:"mush",e:"🪰",n:"P2"},
+{w:"muscle",p:"myskl",e:"💪",n:"P2"},{w:"naissance",p:"nèsans",e:"👶",n:"P2"},
+{w:"natation",p:"natasion",e:"🏊",n:"P2"},{w:"nettoyer",p:"nètwayé",e:"🧹",n:"P2"},
+{w:"niveau",p:"nivo",e:"📊",n:"P2"},{w:"nombreux",p:"nombreu",e:"🔢",n:"P2"},
+{w:"offrir",p:"ofrir",e:"🎁",n:"P2"},{w:"paresseux",p:"parèseu",e:"😴",n:"P2"},
+{w:"parfait",p:"parfè",e:"⭐",n:"P2"},{w:"patient",p:"pasyant",e:"⏳",n:"P2"},
+{w:"pauvre",p:"povr",e:"😔",n:"P2"},{w:"précieux",p:"présyeu",e:"💎",n:"P2"},
+{w:"profond",p:"profon",e:"🌊",n:"P2"},{w:"prudent",p:"prydan",e:"⚠️",n:"P2"},
+{w:"raconter",p:"rakonté",e:"📖",n:"P2"},{w:"rapide",p:"rapid",e:"⚡",n:"P1"},
+{w:"rare",p:"rar",e:"💎",n:"P2"},{w:"remarquer",p:"remarké",e:"👁️",n:"P2"},
+{w:"rendre",p:"randr",e:"🔄",n:"P2"},{w:"respecter",p:"rèspèkté",e:"🙏",n:"P2"},
+{w:"ressembler",p:"resanblé",e:"👥",n:"P2"},{w:"résultat",p:"rézulta",e:"📊",n:"P2"},
+{w:"riche",p:"rish",e:"💰",n:"P2"},{w:"rond",p:"ron",e:"⭕",n:"P1"},
+{w:"sage",p:"saj",e:"🦉",n:"P2"},{w:"sale",p:"sal",e:"🧹",n:"P2"},
+{w:"sec",p:"sèk",e:"☀️",n:"P2"},{w:"secret",p:"sekrè",e:"🔒",n:"P2"},
+{w:"sincère",p:"sinsèr",e:"❤️",n:"P2"},{w:"soigner",p:"swanyé",e:"💊",n:"P2"},
+{w:"solide",p:"solid",e:"💪",n:"P2"},{w:"sombre",p:"sombr",e:"🌑",n:"P2"},
+{w:"souriant",p:"suryan",e:"😊",n:"P2"},{w:"spécial",p:"spésyal",e:"⭐",n:"P2"},
+{w:"sympathique",p:"simpatik",e:"😊",n:"P2"},{w:"timide",p:"timid",e:"😶",n:"P2"},
+{w:"tranquille",p:"trankil",e:"😌",n:"P1"},{w:"traverser",p:"traversé",e:"🌉",n:"P2"},
+{w:"unique",p:"unik",e:"⭐",n:"P2"},{w:"urgent",p:"urjan",e:"🚨",n:"P2"},
+{w:"valise",p:"valiz",e:"🧳",n:"P2"},{w:"vendre",p:"vandr",e:"🏷️",n:"P2"},
+{w:"verbe",p:"vèrb",e:"💬",n:"P2"},{w:"vérifier",p:"vérifyé",e:"✅",n:"P2"},
+{w:"victoire",p:"viktwar",e:"🏆",n:"P2"},{w:"vide",p:"vid",e:"📦",n:"P2"},
+{w:"vif",p:"vif",e:"⚡",n:"P2"},{w:"visage",p:"vizaj",e:"😊",n:"P2"},
+{w:"vitesse",p:"vitès",e:"⚡",n:"P2"},{w:"vivant",p:"vivan",e:"💚",n:"P2"},
+{w:"vivre",p:"vivr",e:"💚",n:"P2"},{w:"voile",p:"vwal",e:"⛵",n:"P2"},
+{w:"voisin",p:"vwazin",e:"👋",n:"P2"},{w:"volcan",p:"volkan",e:"🌋",n:"P2"},
+{w:"voyage",p:"vwayaj",e:"✈️",n:"P2"},{w:"zoo",p:"zo",e:"🦁",n:"P1"},
+// ── P3 ──
+{w:"abonner",p:"aboné",e:"📧",n:"P3"},{w:"absorber",p:"absorbbé",e:"🧽",n:"P3"},
+{w:"accélérer",p:"aksélèré",e:"🚀",n:"P3"},{w:"acclamer",p:"aklamé",e:"👏",n:"P3"},
+{w:"accomplir",p:"akomplir",e:"✅",n:"P3"},{w:"accorder",p:"akordé",e:"🎵",n:"P3"},
+{w:"accrocher",p:"akroshé",e:"🪝",n:"P3"},{w:"accumuler",p:"akumulé",e:"📦",n:"P3"},
+{w:"accuser",p:"akuzé",e:"👉",n:"P3"},{w:"acharnement",p:"asharnman",e:"💪",n:"P3"},
+{w:"actualité",p:"aktualité",e:"📰",n:"P3"},{w:"affection",p:"afèksion",e:"❤️",n:"P3"},
+{w:"affirmer",p:"afirmé",e:"💬",n:"P3"},{w:"affronter",p:"afronté",e:"⚔️",n:"P3"},
+{w:"agrandir",p:"agrandir",e:"📏",n:"P3"},{w:"agresser",p:"agresé",e:"😡",n:"P3"},
+{w:"agitation",p:"ajitasion",e:"😤",n:"P3"},{w:"ajuster",p:"ajusté",e:"🔧",n:"P3"},
+{w:"alimenter",p:"alimanté",e:"🍽️",n:"P3"},{w:"alléger",p:"alèjé",e:"⬇️",n:"P3"},
+{w:"allonger",p:"alonjé",e:"📏",n:"P3"},{w:"ambition",p:"ambision",e:"🎯",n:"P3"},
+{w:"amplifier",p:"amplifyé",e:"🔊",n:"P3"},{w:"ancrer",p:"ankré",e:"⚓",n:"P3"},
+{w:"animer",p:"animé",e:"🎉",n:"P3"},{w:"anticiper",p:"antisipé",e:"🔮",n:"P3"},
+{w:"apaiser",p:"apèzé",e:"😌",n:"P3"},{w:"appliquer",p:"apliké",e:"📌",n:"P3"},
+{w:"approcher",p:"aproshé",e:"👣",n:"P3"},{w:"approuver",p:"apruvé",e:"✅",n:"P3"},
+{w:"ardeur",p:"ardeur",e:"🔥",n:"P3"},{w:"arroser",p:"arozé",e:"🌧️",n:"P3"},
+{w:"artisan",p:"artizan",e:"🔨",n:"P3"},{w:"assembler",p:"asanbllé",e:"🧩",n:"P3"},
+{w:"assistance",p:"asistans",e:"🤝",n:"P3"},{w:"atteindre",p:"atendr",e:"🎯",n:"P3"},
+{w:"attirer",p:"atiré",e:"🧲",n:"P3"},{w:"audace",p:"odas",e:"💪",n:"P3"},
+{w:"auteur",p:"oteur",e:"✍️",n:"P3"},{w:"avantage",p:"avantaj",e:"✅",n:"P3"},
+{w:"capturer",p:"kapturé",e:"📷",n:"P3"},{w:"carrière",p:"karyèr",e:"💼",n:"P3"},
+{w:"catastrophe",p:"katastrof",e:"💥",n:"P3"},{w:"célébrer",p:"sélébré",e:"🎉",n:"P3"},
+{w:"charité",p:"sharité",e:"💛",n:"P3"},{w:"circuler",p:"sirkulé",e:"🔄",n:"P3"},
+{w:"citer",p:"sité",e:"💬",n:"P3"},{w:"citoyen",p:"sitwayin",e:"🏛️",n:"P3"},
+{w:"clarifier",p:"klarifyé",e:"💡",n:"P3"},{w:"climat",p:"klima",e:"🌡️",n:"P3"},
+{w:"combiner",p:"kombiné",e:"🔀",n:"P3"},{w:"communiquer",p:"komuniké",e:"💬",n:"P3"},
+{w:"compétence",p:"kompétans",e:"🎯",n:"P3"},{w:"compléter",p:"komplété",e:"✅",n:"P3"},
+{w:"concentrer",p:"konsantré",e:"🎯",n:"P3"},{w:"protéger",p:"protéjé",e:"🛡️",n:"P3"},
+{w:"prouver",p:"pruvé",e:"✅",n:"P3"},{w:"publier",p:"publiké",e:"📢",n:"P3"},
+{w:"raisonner",p:"rèzoné",e:"🤔",n:"P3"},{w:"rassembler",p:"rasanblé",e:"👥",n:"P3"},
+{w:"réagir",p:"réajir",e:"⚡",n:"P3"},{w:"reconnaître",p:"rekonnètr",e:"👁️",n:"P3"},
+{w:"réduire",p:"réduir",e:"⬇️",n:"P3"},{w:"relier",p:"relyé",e:"🔗",n:"P3"},
+{w:"renoncer",p:"renonsé",e:"🚫",n:"P3"},{w:"représenter",p:"représanté",e:"🎭",n:"P3"},
+{w:"résister",p:"résisté",e:"💪",n:"P3"},{w:"retenir",p:"retnir",e:"✋",n:"P3"},
+{w:"réunir",p:"réunir",e:"👥",n:"P3"},{w:"révéler",p:"révélé",e:"🔍",n:"P3"},
+{w:"risquer",p:"risské",e:"⚠️",n:"P3"},{w:"satisfaire",p:"satisfèr",e:"😊",n:"P3"},
+{w:"sélectionner",p:"sèlèksioné",e:"✅",n:"P3"},{w:"séparer",p:"séparé",e:"↔️",n:"P3"},
+{w:"signaler",p:"sinalé",e:"⚠️",n:"P3"},{w:"simplifier",p:"simplifyé",e:"✅",n:"P3"},
+{w:"souligner",p:"sulinyé",e:"📌",n:"P3"},{w:"soutenir",p:"sutnir",e:"🤝",n:"P3"},
+{w:"stimuler",p:"stimulé",e:"⚡",n:"P3"},{w:"stopper",p:"stopé",e:"🛑",n:"P3"},
+{w:"suggérer",p:"sujéré",e:"💡",n:"P3"},{w:"surveiller",p:"survèyé",e:"👁️",n:"P3"},
+{w:"témoigner",p:"témwanyé",e:"🗣️",n:"P3"},{w:"tenter",p:"tanté",e:"😈",n:"P3"},
+{w:"traduire",p:"tradwir",e:"🌍",n:"P3"},{w:"transmettre",p:"transmètr",e:"📤",n:"P3"},
+{w:"unifier",p:"unifyé",e:"🤝",n:"P3"},{w:"vaincre",p:"venkr",e:"🏆",n:"P3"},
+{w:"valoriser",p:"valorizé",e:"💎",n:"P3"},{w:"violent",p:"violant",e:"⚠️",n:"P3"},
+{w:"vulnérable",p:"vulneérabl",e:"💔",n:"P3"}
 ];
 
-// Mots ajoutés par l'élève (sauvegardés)
+// Mots ajoutés par l'élève
 var motsAjoutes = JSON.parse(localStorage.getItem('motsAjoutes') || '[]');
 var tousLesMots = mots.concat(motsAjoutes);
 
@@ -142,23 +442,23 @@ function afficherSuggestions() {
 
   var t = typed.toLowerCase();
   var resultats = tousLesMots.filter(function(w) {
-    return w.mot.toLowerCase().startsWith(t);
+    return w.w.toLowerCase().startsWith(t);
   }).slice(0, 8);
 
   if (resultats.length === 0) {
-    div.innerHTML = '<span style="color:white;font-size:0.9em">Aucun mot trouvé — utilisez ➕ pour ajouter</span>';
+    div.innerHTML = '<span style="color:white;font-size:0.9em">Aucun mot — utilisez ➕ pour ajouter</span>';
     return;
   }
 
-  resultats.forEach(function(w) {
+  resultats.forEach(function(item) {
     var btn = document.createElement('button');
     btn.className = 'suggestion';
-    btn.textContent = w.emoji + ' ' + w.mot;
+    btn.textContent = item.e + ' ' + item.w;
     btn.onclick = function() {
-      typed = w.mot;
+      typed = item.w;
       maj();
-      parler(w.mot);
-      document.getElementById('msg').textContent = '✅ ' + w.mot;
+      parler(item.w);
+      document.getElementById('msg').textContent = '✅ ' + item.w;
     };
     div.appendChild(btn);
   });
@@ -174,7 +474,7 @@ function parler(texte) {
 
 function dicter() {
   if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    document.getElementById('msg').textContent = '❌ Micro non supporté sur ce navigateur';
+    document.getElementById('msg').textContent = '❌ Micro non supporté';
     return;
   }
   var R = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -197,7 +497,7 @@ function ajouterMot() {
   }
   var emoji = prompt('Quel emoji pour "' + typed + '" ?', '📝');
   if (emoji === null) return;
-  var nouveau = { mot: typed, emoji: emoji || '📝' };
+  var nouveau = { w: typed, e: emoji || '📝', p: typed, n: 'P1' };
   motsAjoutes.push(nouveau);
   tousLesMots.push(nouveau);
   localStorage.setItem('motsAjoutes', JSON.stringify(motsAjoutes));
@@ -209,7 +509,9 @@ function ajouterMot() {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Backspace') { e.preventDefault(); del(); }
   else if (e.key === 'Escape') { clear2(); }
-  else if (/^[a-zA-ZàâäéèêëîïôùûüçÀÂÄÉÈÊËÎÏÔÙÛÜÇ]$/.test(e.key)) { add(e.key.toLowerCase()); }
+  else if (/^[a-zA-ZàâäéèêëîïôùûüçÀÂÄÉÈÊËÎÏÔÙÛÜÇ]$/.test(e.key)) {
+    add(e.key.toLowerCase());
+  }
 });
 </script>
 </body>
