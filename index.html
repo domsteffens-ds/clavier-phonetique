@@ -18,13 +18,13 @@ body { font-family: Arial; background: #667eea; padding: 20px; }
   cursor: pointer; box-shadow: 0 4px 0 #aaa;
 }
 .k:active { transform: translateY(3px); box-shadow: 0 1px 0 #aaa; }
-#status { color: white; text-align: center; font-size: 1.2em; }
+#status { color: white; text-align: center; font-size: 1.2em; margin-bottom: 15px; }
 </style>
 </head>
 <body>
 
 <div id="screen">|</div>
-<div id="status">Cliquez une lettre !</div>
+<div id="status">Cliquez une lettre ou tapez sur votre clavier !</div>
 
 <div class="row">
   <button class="k" onclick="add('a')">A</button>
@@ -73,12 +73,26 @@ function add(l) {
 function del() {
   typed = typed.slice(0, -1);
   document.getElementById('screen').textContent = typed || '|';
+  document.getElementById('status').textContent = 'Tapé : ' + typed;
 }
 
 function clear2() {
   typed = '';
   document.getElementById('screen').textContent = '|';
+  document.getElementById('status').textContent = 'Effacé !';
 }
+
+// ✅ CLAVIER PHYSIQUE
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Backspace') {
+    e.preventDefault();
+    del();
+  } else if (e.key === 'Escape') {
+    clear2();
+  } else if (/^[a-zA-ZàâäéèêëîïôùûüçÀÂÄÉÈÊËÎÏÔÙÛÜÇ]$/.test(e.key)) {
+    add(e.key.toLowerCase());
+  }
+});
 </script>
 </body>
 </html>
